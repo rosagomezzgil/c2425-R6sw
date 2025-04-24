@@ -36,7 +36,7 @@ templates = Jinja2Templates(directory="templates")
 # Generar la gráfica de velas al inicio
 def crear_grafica():
     # Cargar los datos del archivo Parquet
-    df = pd.read_parquet(r"C:\Users\Daniel\Universidad\PD\c2425-R6\data\parquet\data.parquet")
+    df = pd.read_parquet(r"data\data.parquet")
 
     # Asegurar que los datos están ordenados por fecha
     df = df.sort_values('timestamp')
