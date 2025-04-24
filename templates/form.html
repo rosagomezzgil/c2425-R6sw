@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de predicción</title>
+</head>
+<body>
+    <h1>Formulario de predicción</h1>
+
+    <!-- Formulario para enviar los valores x e y -->
+    <form action="/predict-html" method="post">
+        <label for="x">Valor de X:</label>
+        <input type="number" id="x" name="x" required><br><br>
+
+        <label for="y">Valor de Y:</label>
+        <input type="number" id="y" name="y" required><br><br>
+
+        <button type="submit">Calcular</button>
+    </form>
+
+    {% if resultado is not none %}
+    <h2>Resultado: {{ resultado }}</h2>
+    {% endif %}
+</body>
+</html>
