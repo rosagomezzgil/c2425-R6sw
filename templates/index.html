@@ -3,62 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Página Principal de Bitcoin</title>
-    <style>
-        body {
-            background-color: #121212;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-        .container {
-            margin: 20px;
-        }
-        .header {
-            font-size: 36px;
-            margin: 20px;
-        }
-        .button {
-            background-color: #6200ea;
-            border: none;
-            color: white;
-            padding: 15px 32px;
-            text-align: center;
-            text-decoration: none;
-            font-size: 16px;
-            margin: 10px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-        .button:hover {
-            background-color: #3700b3;
-        }
-        img {
-            width: 300px;
-            margin: 20px;
-            border-radius: 10px;
-        }
-        .graph-container {
-            width: 80%;
-            margin: 0 auto;
-        }
-    </style>
+    <title>Bitcoin Trading Platform</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    <div class="header">Bienvenido a la Página de Bitcoin</div>
+    <nav class="navbar">
+        <div class="logo">
+            <span class="logo-icon">₿</span>
+            <span>CryptoVision Insights</span>
+        </div>
+        <div class="nav-links">
+            <a href="#" class="nav-link">Mercado</a>
+            <a href="#" class="nav-link">Gráficos</a>
+            <a href="#" class="nav-link">Portafolio</a>
+            <a href="#" class="nav-link">Noticias</a>
+        </div>
+    </nav>
 
-    <!-- Imagen -->
-    <img src="/static/image.jpg" alt="Imagen de Bitcoin">
+    <div class="container">
+        <section class="hero">
+            <h1 class="hero-title">Plataforma de Trading Bitcoin</h1>
+            <p class="hero-subtitle">Monitorea, analiza y toma decisiones informadas con nuestra avanzada plataforma de análisis de Bitcoin</p>
+            <img src="/static/image.jpg" alt="Logo Bitcoin" class="bitcoin-logo">
+        </section>
 
-    <!-- Gráfico de Velas -->
-    <div class="graph-container">
-        <iframe src="/static/grafica_bitcoin.html" width="100%" height="600px" frameborder="0"></iframe>
+        <div class="data-row">
+            <div class="data-card">
+                <div class="data-label">Precio Actual</div>
+                <div class="data-value">$ CAMBIAR</div>
+                <div class="data-change positive">
+                    <span>+ PREDICCION %</span>
+                    <span>FLECHITAS ↑</span>
+                </div>
+            </div>
+
+            <div class="data-card">
+                <div class="data-label">Volumen 24h</div>
+                <div class="data-value">$ CAMBIAR B</div>
+                <div class="data-change positive">
+                    <span>+ PREDICCION %</span>
+                    <span>FLECHITAS ↑</span>
+                </div>
+            </div>
+
+            <div class="data-card">
+                <div class="data-label">Capitalización</div>
+                <div class="data-value">$ CAMBIAR T</div>
+                <div class="data-change positive">
+                    <span>+ PREDICCION %</span>
+                    <span>FLECHITAS ↑</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Gráfico de Bitcoin</div>
+            </div>
+
+            <div class="date-selector">
+                <input type="date" class="date-input" id="start-date">
+                <input type="date" class="date-input" id="end-date">
+                <button class="date-button" id="update-chart">Actualizar Gráfico</button>
+            </div>
+
+            <div class="graph-container">
+                <iframe src="/static/grafica_bitcoin.html" class="graph-iframe" frameborder="0"></iframe>
+            </div>
+        </div>
     </div>
 
-    <!-- Botones -->
-    <div>
-        <button class="button">Ver más datos</button>
-        <button class="button">Comprar Bitcoin</button>
-    </div>
+    <footer class="footer">
+        <p class="footer-text">© 2025 CryptoVision Insights. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="/static/js/scripts.js"></script>
 </body>
 </html>
