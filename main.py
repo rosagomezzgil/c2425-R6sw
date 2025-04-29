@@ -21,10 +21,11 @@ def predict_html(request: Request, x: float = Form(...), y: float = Form(...)):
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -32,6 +33,81 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
+
+
+# Modelo para la solicitud de inversión
+class InvestmentRequest(BaseModel):
+    investment_amount: float
+
+
+# Modelo para la respuesta de predicción
+class BitcoinPrediction(BaseModel):
+    current_price: float
+    price_7d: float
+    price_30d: float
+    change_7d: float
+    change_30d: float
+
+
+# Esta es una función simulada para demostración
+def predict_bitcoin_price(days_ahead: int = 0) -> float:
+    """Simula una predicción del precio de Bitcoin"""
+    # En un caso real, aquí llamarías a tu modelo entrenado
+    # Esta es solo una simulación
+    base_price = 71235.00  # Precio base actual
+
+    # Simulación simple de variación
+    if days_ahead == 0:
+        return base_price
+    elif days_ahead == 7:
+        # Simulación de aumento del 3.5% en 7 días
+        return base_price * 1.035
+    elif days_ahead == 30:
+        # Simulación de aumento del 8.2% en 30 días
+        return base_price * 1.082
+    else:
+        # Para cualquier otro horizonte temporal
+        return 0
+
+
+# Endpoint para obtener el precio actual y predicciones
+@app.get("/api/bitcoin/current", response_model=BitcoinPrediction)
+def get_current_bitcoin():
+    current_price = predict_bitcoin_price(0)
+    price_7d = predict_bitcoin_price(7)
+    price_30d = predict_bitcoin_price(30)
+
+    return BitcoinPrediction(
+        current_price=current_price,
+        price_7d=price_7d,
+        price_30d=price_30d,
+        change_7d=((price_7d - current_price) / current_price) * 100,
+        change_30d=((price_30d - current_price) / current_price) * 100
+    )
+
+
+# Endpoint para calcular el rendimiento de una inversión
+@app.post("/api/bitcoin/investment", response_model=BitcoinPrediction)
+def calculate_investment(request: InvestmentRequest):
+    if request.investment_amount <= 0:
+        raise HTTPException(status_code=400, detail="La cantidad de inversión debe ser positiva")
+
+    # Obtener predicciones de precios
+    current_price = predict_bitcoin_price(0)
+    price_7d = predict_bitcoin_price(7)
+    price_30d = predict_bitcoin_price(30)
+
+    # Calcular cambios porcentuales
+    change_7d = ((price_7d - current_price) / current_price) * 100
+    change_30d = ((price_30d - current_price) / current_price) * 100
+
+    return BitcoinPrediction(
+        current_price=current_price,
+        price_7d=price_7d,
+        price_30d=price_30d,
+        change_7d=change_7d,
+        change_30d=change_30d
+    )
 
 # Generar la gráfica de velas al inicio
 def crear_grafica():
@@ -272,45 +348,56 @@ def crear_grafica():
     )
 
     # Añadir indicadores de tendencia
-    if 'tendencia_futura_7d' in df.columns and 'tendencia_futura_30d' in df.columns:
-        tend_7d = df['tendencia_futura_7d'].iloc[-1]
-        tend_30d = df['tendencia_futura_30d'].iloc[-1]
+    # if 'pct_cambio_7d' in df.columns and 'pct_cambio_30d' in df.columns:
+    #     fig.add_trace(
+    #         go.Scatter(
+    #             x=df['timestamp'],
+    #             y=df['pct_cambio_7d'] * 100,
+    #             line=dict(color='#7b5dfa', width=1.5),  # Neon púrpura
+    #             name='SMA 200'
+    #         ),
+    #         row=1, col=1
+    #     )
 
-        tend_text = f"Tendencia 7D: {tend_7d}<br>Tendencia 30D: {tend_30d}"
-
-        fig.add_annotation(
-            x=0.85,
-            y=0.95,
-            xref="paper",
-            yref="paper",
-            text=tend_text,
-            showarrow=False,
-            font=dict(size=12, color="#ffffff"),
-            bgcolor="rgba(0, 0, 0, 0.5)",
-            bordercolor="#00b4ff",
-            borderwidth=1,
-            borderpad=4,
-            align="left"
-        )
+    # if 'tendencia_futura_7d' in df.columns and 'tendencia_futura_30d' in df.columns:
+    #     tend_7d = df['tendencia_futura_7d'].iloc[-1]
+    #     tend_30d = df['tendencia_futura_30d'].iloc[-1]
+    #
+    #     tend_text = f"Tendencia 7D: {tend_7d}<br>Tendencia 30D: {tend_30d}"
+    #
+    #     fig.add_annotation(
+    #         x=0.85,
+    #         y=0.95,
+    #         xref="paper",
+    #         yref="paper",
+    #         text=tend_text,
+    #         showarrow=False,
+    #         font=dict(size=12, color="#ffffff"),
+    #         bgcolor="rgba(0, 0, 0, 0.5)",
+    #         bordercolor="#00b4ff",
+    #         borderwidth=1,
+    #         borderpad=4,
+    #         align="left"
+    #     )
 
     # Añadir herramientas avanzadas
-    fig.update_xaxes(
-        rangeslider_visible=False,
-        rangeselector=dict(
-            buttons=[
-                dict(count=1, label="1D", step="day", stepmode="backward"),
-                dict(count=7, label="1W", step="day", stepmode="backward"),
-                dict(count=1, label="1M", step="month", stepmode="backward"),
-                dict(count=3, label="3M", step="month", stepmode="backward"),
-                dict(count=6, label="6M", step="month", stepmode="backward"),
-                dict(count=1, label="1Y", step="year", stepmode="backward"),
-                dict(step="all", label="MAX")
-            ],
-            bgcolor='rgba(0,0,0,0.7)',
-            activecolor='#00b4ff'
-        ),
-        row=1, col=1
-    )
+    # fig.update_xaxes(
+    #     rangeslider_visible=False,
+    #     rangeselector=dict(
+    #         buttons=[
+    #             dict(count=1, label="1D", step="day", stepmode="backward"),
+    #             dict(count=7, label="1W", step="day", stepmode="backward"),
+    #             dict(count=1, label="1M", step="month", stepmode="backward"),
+    #             dict(count=3, label="3M", step="month", stepmode="backward"),
+    #             dict(count=6, label="6M", step="month", stepmode="backward"),
+    #             dict(count=1, label="1Y", step="year", stepmode="backward"),
+    #             dict(step="all", label="MAX")
+    #         ],
+    #         bgcolor='rgba(0,0,0,0.7)',
+    #         activecolor='#00b4ff'
+    #     ),
+    #     row=1, col=1
+    # )
 
     # Añadir herramientas de crosshair para información precisa al pasar el cursor
     fig.update_xaxes(showspikes=True, spikecolor='white', spikesnap='cursor', spikemode='across')

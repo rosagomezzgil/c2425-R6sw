@@ -3,56 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bitcoin Trading Platform</title>
+    <meta name="description" content="Plataforma avanzada para análisis y trading de Bitcoin con datos en tiempo real">
+    <title>CryptoVision Insights</title>
     <link rel="stylesheet" href="/static/css/styles.css">
+    <!-- Favicon -->
+    <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">
-            <span class="logo-icon">₿</span>
-            <span>CryptoVision Insights</span>
-        </div>
-        <div class="nav-links">
-            <a href="#" class="nav-link">Mercado</a>
-            <a href="#" class="nav-link">Gráficos</a>
-            <a href="#" class="nav-link">Portafolio</a>
-            <a href="#" class="nav-link">Noticias</a>
-        </div>
-    </nav>
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <span class="logo-icon">₿</span>
+                <span>CryptoVision Insights</span>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="nav-link">Mercado</a>
+                <a href="#" class="nav-link">Gráficos</a>
+                <a href="#" class="nav-link">Portafolio</a>
+                <a href="#" class="nav-link">Noticias</a>
+            </div>
+        </nav>
+    </header>
 
-    <div class="container">
+    <main class="container">
         <section class="hero">
             <h1 class="hero-title">Plataforma de Trading Bitcoin</h1>
             <p class="hero-subtitle">Monitorea, analiza y toma decisiones informadas con nuestra avanzada plataforma de análisis de Bitcoin</p>
-            <img src="/static/image.jpg" alt="Logo Bitcoin" class="bitcoin-logo">
         </section>
+
+        <!-- Formulario de inversión -->
+        <div class="investment-form">
+            <h3>Simulador de Inversión</h3>
+            <div class="input-group">
+                <label for="investment-amount">Cantidad a invertir:</label>
+                <input type="number" id="investment-amount" placeholder="Ingrese cantidad en USD" min="1" step="1" aria-label="Cantidad de inversión en dólares">
+            </div>
+            <button id="calculate-btn" class="investment-btn">Calcular Potencial Rendimiento</button>
+        </div>
 
         <div class="data-row">
             <div class="data-card">
                 <div class="data-label">Precio Actual</div>
-                <div class="data-value">$ CAMBIAR</div>
-                <div class="data-change positive">
-                    <span>+ PREDICCION %</span>
-                    <span>FLECHITAS ↑</span>
+                <div class="data-value" id="current-price">$71,235.00</div>
+                <div class="data-change" id="current-change">
+                    <span id="current-percent">--</span>
+                    <span id="current-arrow">--</span>
                 </div>
+                <div class="profit-amount" id="current-profit"></div>
             </div>
 
             <div class="data-card">
-                <div class="data-label">Volumen 24h</div>
-                <div class="data-value">$ CAMBIAR B</div>
-                <div class="data-change positive">
-                    <span>+ PREDICCION %</span>
-                    <span>FLECHITAS ↑</span>
+                <div class="data-label">7 días</div>
+                <div class="data-value" id="price-7d">--</div>
+                <div class="data-change" id="change-7d">
+                    <span id="percent-7d">--</span>
+                    <span id="arrow-7d">--</span>
                 </div>
+                <div class="profit-amount" id="profit-7d"></div>
             </div>
 
             <div class="data-card">
-                <div class="data-label">Capitalización</div>
-                <div class="data-value">$ CAMBIAR T</div>
-                <div class="data-change positive">
-                    <span>+ PREDICCION %</span>
-                    <span>FLECHITAS ↑</span>
+                <div class="data-label">30 días</div>
+                <div class="data-value" id="price-30d">--</div>
+                <div class="data-change" id="change-30d">
+                    <span id="percent-30d">--</span>
+                    <span id="arrow-30d">--</span>
                 </div>
+                <div class="profit-amount" id="profit-30d"></div>
             </div>
         </div>
 
@@ -62,21 +79,24 @@
             </div>
 
             <div class="date-selector">
-                <input type="date" class="date-input" id="start-date">
-                <input type="date" class="date-input" id="end-date">
+                <input type="date" class="date-input" id="start-date" aria-label="Fecha de inicio">
+                <input type="date" class="date-input" id="end-date" aria-label="Fecha de fin">
                 <button class="date-button" id="update-chart">Actualizar Gráfico</button>
             </div>
 
             <div class="graph-container">
-                <iframe src="/static/grafica_bitcoin.html" class="graph-iframe" frameborder="0"></iframe>
+                <iframe src="/static/grafica_bitcoin.html" class="graph-iframe" title="Gráfico de precios de Bitcoin"></iframe>
             </div>
         </div>
-    </div>
+    </main>
 
     <footer class="footer">
-        <p class="footer-text">© 2025 CryptoVision Insights. Todos los derechos reservados.</p>
+        <div class="container">
+            <p class="footer-text">© 2025 CryptoVision Insights. Todos los derechos reservados.</p>
+        </div>
     </footer>
 
-    <script src="/static/js/scripts.js"></script>
+    <!-- Scripts -->
+    <script src="/static/js/main.js"></script>
 </body>
 </html>
