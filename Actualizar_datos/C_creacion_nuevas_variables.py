@@ -71,7 +71,7 @@ def crear_variables(df: pd.DataFrame) -> pd.DataFrame:
 
 
     # Medias móviles
-    crear_medias_moviles(df, columna='close', ventanas=[50,200])
+    df = crear_medias_moviles(df, columna='close', ventanas=[50,200])
 
     # RSI
     df = calcular_rsi(df, "close")
