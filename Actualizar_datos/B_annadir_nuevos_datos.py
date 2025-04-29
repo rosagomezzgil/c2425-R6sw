@@ -13,8 +13,7 @@ from datetime import datetime, date
 def actualizar_parquet_general(parquet_path: str):
     # 1. Cargar el DataFrame actual
     df_actual = pd.read_parquet(parquet_path)
-    print(df_actual.head())
-    print(df_actual.tail())
+
     # Asegurar que el timestamp es el índice
     if "timestamp" in df_actual.columns:
         df_actual["timestamp"] = pd.to_datetime(df_actual["timestamp"])
@@ -93,7 +92,7 @@ def actualizar_parquet_general(parquet_path: str):
         # Yahoo Finance - dxy
         df_dxy   = get_yfinance_series(ticker="DX-Y.NYB", start_date=start_date, end_date=end_date, interval="1d")
         # Guardar cada columna que nos interesa
-        for col in ['Open', 'High', 'Low', 'Close', 'Volume']:
+        for col in ['Open', 'High', 'Low', 'Close']:
             columnas_nuevas[f'{col}_dxy'] = df_dxy[col].squeeze()
     except Exception as e:
         print(f"Error actualizando Nasdaq: {e}")
