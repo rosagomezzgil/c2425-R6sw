@@ -3,7 +3,7 @@ import pandas as pd
 def eliminar_variables(df):
 
     df = df.copy()
-    df.drop(columns=['open_binance', 'high_binance', 'low_binance', 'volumen_binance'], inplace=True)
+    df.drop(columns=['open_binance', 'high_binance', 'low_binance'], inplace=True)
     df.drop(columns=['SMA_50_binance', 'EMA_200_binance'], inplace=True)
     df.drop(columns=['SMA_50_hashrate', 'EMA_200_hashrate'], inplace=True)
     df.drop(columns=['open_mDbinance','high_mDbinance','low_mDbinance','SMA_50_mDbinance','EMA_200_mDbinance'],inplace=True)
@@ -49,21 +49,3 @@ def crear_conjunto_30d(df):
     # Guardar df limpio
     output_path = "../data/dataset_30d.parquet"
     df_30d.to_parquet(output_path, index=False)
-
-"""
-if __name__ == "__main__":
-    parquet_path = "../data/data.parquet"
-
-    # 1. Cargar el DataFrame existente
-    df = pd.read_parquet(parquet_path)
-
-    # 2.Eliminar variables
-    df = eliminar_variables(df)
-
-    # 3.Generar el parquet a 7 dias
-    crear_conjunto_7d(df)
-
-    # 4.Generar el parquet a 30 dias
-    crear_conjunto_30d(df)
-
-"""
