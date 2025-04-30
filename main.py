@@ -433,11 +433,17 @@ def crear_grafica():
 
     return "Gráfica creada con éxito"
 
-# Actualizar datos
-pipeline()
+@app.on_event("startup")
+def startup_event():
+    '''Se ejecuta una vez al principio. Lo usamos aunque esté "deprecated" para no usar corrutinas.'''
+    # Actualizar datos
+    pipeline()
 
-# Llamar a la función para crear la gráfica al iniciar la app
-crear_grafica()
+    # Llamar a la función para crear la gráfica al iniciar la app
+    crear_grafica()
+
+    # Cargar el modelo como atributo de la aplicación
+    # app.model = load('models/final_model.joblib')
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):

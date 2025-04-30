@@ -3,8 +3,8 @@ import pandas as pd
 def eliminar_variables(df):
 
     df = df.copy()
-    # df.drop(columns=['open_binance', 'high_binance', 'low_binance', 'volumen_binance'], inplace=True)
-    # df.drop(columns=['SMA_50_binance', 'EMA_200_binance'], inplace=True)
+    df.drop(columns=['open_binance', 'high_binance', 'low_binance', 'volumen_binance'], inplace=True)
+    df.drop(columns=['SMA_50_binance', 'EMA_200_binance'], inplace=True)
     df.drop(columns=['SMA_50_hashrate', 'EMA_200_hashrate'], inplace=True, errors='ignore')
     df.drop(columns=['open_mDbinance','high_mDbinance','low_mDbinance','SMA_50_mDbinance','EMA_200_mDbinance'],inplace=True, errors='ignore')
     sufijos = ['_sp500', '_nasdaq', '_dxy']
@@ -14,7 +14,7 @@ def eliminar_variables(df):
     df.drop(columns=['tendencia_futura_7d', 'tendencia_futura_30d'], inplace=True, errors='ignore')
     return df
 
-def crear_conjunto_7d(df, output_path):
+def crear_conjunto_7d(df):
 
     # Crear df_7d quitando columnas de horizonte 30 días
     df_7d = df.drop(columns=['pct_cambio_30d'])
@@ -29,9 +29,9 @@ def crear_conjunto_7d(df, output_path):
     df_7d = df_7d.dropna()
 
     # Guardar df limpio
-    df_7d.to_parquet(output_path, index=False)
+    df_7d.to_parquet("data/dataset_7d.parquet", index=False)
 
-def crear_conjunto_30d(df, output_path):
+def crear_conjunto_30d(df):
     # Crear df_30d quitando columnas de horizonte 7 días
     df_30d = df.drop(columns=['pct_cambio_7d'])
 
@@ -45,4 +45,4 @@ def crear_conjunto_30d(df, output_path):
     df_30d = df_30d.dropna()
 
     # Guardar df limpio
-    df_30d.to_parquet(output_path, index=False)
+    df_30d.to_parquet("data/dataset_30d.parquet", index=False)

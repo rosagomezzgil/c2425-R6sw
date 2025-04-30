@@ -10,7 +10,7 @@ def pipeline(parquet_path="data/data.parquet"):
         df = aplicar_transformaciones(df)
         df = calcular_variables_respuesta(df, parquet_path)
         df = eliminar_variables(df)
-        crear_conjunto_7d(df, parquet_path)
-        crear_conjunto_30d(df, parquet_path)
+        crear_conjunto_7d(df)
+        crear_conjunto_30d(df)
 
     print("Finalizado!")

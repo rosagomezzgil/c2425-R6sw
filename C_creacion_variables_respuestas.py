@@ -43,11 +43,6 @@ def calcular_tendencia(
         df_result[f"pct_cambio_{horizonte}d"] < -threshold, f"tendencia_futura_{horizonte}d"
     ] = -1  # Bajista
 
-    # Guardar CSV si se proporciona una ruta
-    if output_path:
-        df_result.to_csv(output_path, index=False)
-        print(f"Datos guardados en: {output_path}")
-
     return df_result
 
 def calcular_variables_respuesta(df, parquet_path):
