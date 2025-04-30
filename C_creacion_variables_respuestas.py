@@ -60,28 +60,3 @@ def calcular_variables_respuesta(df, parquet_path):
 
     df.to_parquet(parquet_path)
     return df
-
-
-"""
-if __name__ == "__main__":
-    parquet_path = "../data/data.parquet"
-
-    # 1. Cargar el DataFrame existente
-    df = pd.read_parquet(parquet_path)
-
-    # 2. Definir horizontes que quieres recalcular
-    horizontes = [7, 30]
-
-    for h in horizontes:
-        # 3. Ejecutar cálculo de tendencia (devuelve copia con columnas nuevas)
-        df_tend = calcular_tendencia(df, horizonte=h, pct_promedio=True)
-
-        # 4. Reemplazar en el DataFrame original las columnas modificadas
-        for col in [f"pct_cambio_{h}d", f"tendencia_futura_{h}d"]:
-            df[col] = df_tend[col]
-
-    # 5. Guardar el DataFrame actualizado
-    df.to_parquet(parquet_path)
-    print("Parquet actualizado con nuevas variables objetivo.")
-
-"""
