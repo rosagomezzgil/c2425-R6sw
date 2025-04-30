@@ -27,6 +27,8 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+from G_pipeline import pipeline
+
 app = FastAPI()
 
 # Servir archivos estáticos desde la carpeta 'static'
@@ -221,7 +223,7 @@ def crear_grafica():
     fig.add_trace(
         go.Bar(
             x=df['timestamp'],
-            y=df['volume_binance'],
+            y=df['volumen_binance'],
             marker_color=colors,
             name='Volumen'
         ),
@@ -229,11 +231,11 @@ def crear_grafica():
     )
 
     # Añadir SMA de volumen
-    df['volume_sma20'] = df['volume_binance'].rolling(window=20).mean()
+    df['volumen_sma20'] = df['volumen_binance'].rolling(window=20).mean()
     fig.add_trace(
         go.Scatter(
             x=df['timestamp'],
-            y=df['volume_sma20'],
+            y=df['volumen_sma20'],
             line=dict(color='#7b5dfa', width=1.5),
             name='Volumen SMA 20'
         ),
@@ -430,6 +432,9 @@ def crear_grafica():
     )
 
     return "Gráfica creada con éxito"
+
+# Actualizar datos
+pipeline()
 
 # Llamar a la función para crear la gráfica al iniciar la app
 crear_grafica()

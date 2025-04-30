@@ -125,9 +125,9 @@ def aplicar_transformaciones(df: pd.DataFrame) -> pd.DataFrame:
     activos = {
         "binance": ["close_binance", "high_binance", "low_binance"],
         "mDbinance": ["close_mDbinance", "high_mDbinance", "low_mDbinance"],
-        "sp500": ["Close_sp500", "High_sp500", "Low_sp500"],
-        "nasdaq": ["Close_nasdaq", "High_nasdaq", "Low_nasdaq"],
-        "dxy": ["Close_dxy", "High_dxy", "Low_dxy"],
+        "sp500": ["close_sp500", "high_sp500", "low_sp500"],
+        "nasdaq": ["close_nasdaq", "high_nasdaq", "low_nasdaq"],
+        "dxy": ["close_dxy", "high_dxy", "low_dxy"],
         "hashrate" : ["hashrate_hashrate"]
     }
 

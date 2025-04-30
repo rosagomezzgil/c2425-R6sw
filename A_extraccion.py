@@ -333,7 +333,7 @@ def actualizar_parquet_general(parquet_path: str):
 
     if ultima_fecha >= hoy:
         print("El DataFrame ya está actualizado.")
-        return df_actual
+        return df_actual, False
 
     start_date = ultima_fecha.strftime("%Y-%m-%d")
     end_date = hoy.strftime("%Y-%m-%d")
@@ -425,7 +425,7 @@ def actualizar_parquet_general(parquet_path: str):
 
     if df_nuevos.empty:
         print("No hay datos nuevos que añadir.")
-        return df_actual
+        return df_actual, False
 
     # 5. Unir los datos nuevos al DataFrame existente
     df_actualizado = pd.concat([df_actual, df_nuevos])
@@ -437,7 +437,7 @@ def actualizar_parquet_general(parquet_path: str):
     #df_actualizado.to_parquet(parquet_path)
     print(f"Parquet actualizado. Nuevas filas añadidas: {len(df_nuevos)}")
 
-    return df_actualizado
+    return df_actualizado, True
 
 #Funcion auxiliar
 def ajustar_timeframe_google_trends(dias_actualizar: int) -> str:
