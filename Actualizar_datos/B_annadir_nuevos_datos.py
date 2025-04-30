@@ -56,7 +56,7 @@ def actualizar_parquet_general(parquet_path: str):
         # Binance Spot OHLCV
         df_binance_spot = get_binance_ohlcv_series(symbol="BTCUSDT", interval="1d", limit=dias_a_actualizar)
         # Guardar cada columna que nos interesa
-        for col in ['open', 'high', 'low', 'close', 'volume', 'trades']:
+        for col in ['open', 'high', 'low', 'close', 'volumen', 'trades']:
             columnas_nuevas[f'{col}_binance'] = df_binance_spot[col]
     except Exception as e:
         print(f"Error actualizando Binance Spot: {e}")
@@ -65,8 +65,8 @@ def actualizar_parquet_general(parquet_path: str):
         # Binance Futures (solo close también)
         df_binance_futures = get_binance_futures_series(symbol="BTCUSDT", days=dias_a_actualizar, interval="1d")
         # Guardar cada columna que nos interesa
-        for col in ['open', 'high', 'low', 'close', 'volume', 'trades']:
-            columnas_nuevas[f'mD{col}_mDbinance'] = df_binance_futures[col]
+        for col in ['open', 'high', 'low', 'close', 'volumen', 'trades']:
+            columnas_nuevas[f'{col}_mDbinance'] = df_binance_futures[col]
     except Exception as e:
         print(f"Error actualizando Binance Futures: {e}")
 
@@ -75,7 +75,7 @@ def actualizar_parquet_general(parquet_path: str):
         df_sp500 = get_yfinance_series(ticker="^GSPC", start_date=start_date, end_date=end_date, interval="1d")
         # Guardar cada columna que nos interesa
         for col in ['Open', 'High', 'Low', 'Close', 'Volume']:
-            columnas_nuevas[f'{col}_sp500'] = df_sp500[col].squeeze()
+            columnas_nuevas[f'{col.lower()}_sp500'] = df_sp500[col].squeeze()
     except Exception as e:
         print(f"Error actualizando SP500: {e}")
 
@@ -84,7 +84,7 @@ def actualizar_parquet_general(parquet_path: str):
         df_nasdaq  = get_yfinance_series(ticker="^IXIC", start_date=start_date, end_date=end_date, interval="1d")
         # Guardar cada columna que nos interesa
         for col in ['Open', 'High', 'Low', 'Close', 'Volume']:
-            columnas_nuevas[f'{col}_nasdaq'] = df_nasdaq[col].squeeze()
+            columnas_nuevas[f'{col.lower()}_nasdaq'] = df_nasdaq[col].squeeze()
     except Exception as e:
         print(f"Error actualizando Nasdaq: {e}")
 
@@ -93,7 +93,7 @@ def actualizar_parquet_general(parquet_path: str):
         df_dxy   = get_yfinance_series(ticker="DX-Y.NYB", start_date=start_date, end_date=end_date, interval="1d")
         # Guardar cada columna que nos interesa
         for col in ['Open', 'High', 'Low', 'Close']:
-            columnas_nuevas[f'{col}_dxy'] = df_dxy[col].squeeze()
+            columnas_nuevas[f'{col.lower()}_dxy'] = df_dxy[col].squeeze()
     except Exception as e:
         print(f"Error actualizando Nasdaq: {e}")
 

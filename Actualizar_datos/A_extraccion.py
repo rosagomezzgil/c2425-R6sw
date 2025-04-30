@@ -119,8 +119,9 @@ def get_binance_futures_series(
 
             df["timestamp"] = pd.to_datetime(df["timestamp"], unit="ms")
             df.set_index("timestamp", inplace=True)
+            df = df.rename(columns={"volume": "volumen"})
 
-            all_data.append(df[["open", "high", "low", "close", "volume", "trades"]])
+            all_data.append(df[["open", "high", "low", "close", "volumen", "trades"]])
 
             start_time = int(df.index[-1].timestamp() * 1000) + interval_ms
             time.sleep(0.5)  # Para no saturar la API
@@ -262,6 +263,8 @@ def get_binance_ohlcv_series(
     df[numeric_cols] = df[numeric_cols].astype(float)
 
     df = df[["timestamp", "open", "high", "low", "close", "volume", "trades"]].copy()
+    df = df.rename(columns={"volume": "volumen"})
+
     df.set_index("timestamp", inplace=True)
     df.sort_index(inplace=True)
 

@@ -22,7 +22,7 @@ def aplicar_transformaciones(df: pd.DataFrame) -> pd.DataFrame:
 
     activos = {
         "binance": ["close_binance", "high_binance", "low_binance"],
-        "mDbinance": ["mDclose_mDbinance", "mDhigh_mDbinance", "mDlow_mDbinance"],
+        "mDbinance": ["close_mDbinance", "high_mDbinance", "low_mDbinance"],
         "sp500": ["Close_sp500", "High_sp500", "Low_sp500"],
         "nasdaq": ["Close_nasdaq", "High_nasdaq", "Low_nasdaq"],
         "dxy": ["Close_dxy", "High_dxy", "Low_dxy"],
@@ -47,13 +47,7 @@ def aplicar_transformaciones(df: pd.DataFrame) -> pd.DataFrame:
             # Añadir columnas de salida renombradas al df original
             for col in df_activo.columns:
                 if col not in ["timestamp", "close", "high", "low", "hashrate_hashrate"]:
-                    if nombre == "mDbinance":
-                        if col == "RSI":
-                            nuevo_nombre = f"mD_{col}_{nombre}"
-                        else:
-                            nuevo_nombre = f"mD{col}_{nombre}"
-                    else:
-                        nuevo_nombre = f"{col}_{nombre}"
+                    nuevo_nombre = f"{col}_{nombre}"
                     df[nuevo_nombre] = df_activo[col]
 
     return df
