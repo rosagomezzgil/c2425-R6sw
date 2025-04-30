@@ -50,6 +50,7 @@ def crear_conjunto_30d(df):
     output_path = "../data/dataset_30d.parquet"
     df_30d.to_parquet(output_path, index=False)
 
+"""
 if __name__ == "__main__":
     parquet_path = "../data/data.parquet"
 
@@ -64,3 +65,5 @@ if __name__ == "__main__":
 
     # 4.Generar el parquet a 30 dias
     crear_conjunto_30d(df)
+
+"""
