@@ -21,9 +21,10 @@ def predict_html(request: Request, x: float = Form(...), y: float = Form(...)):
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from datetime import datetime
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
@@ -112,12 +113,66 @@ def calculate_investment(request: InvestmentRequest):
     )
 
 # Generar la gráfica de velas al inicio
-def crear_grafica():
+def crear_grafica(request: Request = None):
+    """
+    Crea la gráfica de velas con soporte para filtrado por fechas
+
+    Args:
+        request: Objeto Request de FastAPI, opcional. Si se proporciona, se usarán
+                sus parámetros query para filtrar por fechas.
+    """
     # Cargar los datos del archivo Parquet
     df = pd.read_parquet(r"data\data.parquet")
 
     # Asegurar que los datos están ordenados por fecha
     df = df.sort_values('timestamp')
+
+    # Filtrar por fechas si se proporcionan en la solicitud
+    start_date = None
+    end_date = None
+
+    if request and "start" in request.query_params and "end" in request.query_params:
+        try:
+            start_date = request.query_params.get("start")
+            end_date = request.query_params.get("end")
+
+            print(f"Parámetros de fechas recibidos: start={start_date}, end={end_date}")
+
+            # Si las fechas no tienen el formato ISO completo, intentar añadir la parte de tiempo
+            if 'T' not in start_date:
+                start_date = start_date + 'T00:00:00'
+            if 'T' not in end_date:
+                end_date = end_date + 'T23:59:59'
+
+            print(f"Fechas formateadas: start={start_date}, end={end_date}")
+
+            # Convertir a datetime para poder filtrar
+            try:
+                start_date = datetime.fromisoformat(start_date)
+                end_date = datetime.fromisoformat(end_date)
+            except ValueError as e:
+                print(f"Error al convertir fechas con fromisoformat: {e}")
+                # Intentar un método alternativo
+                start_date = datetime.strptime(start_date.split('T')[0], '%Y-%m-%d')
+                end_date = datetime.strptime(end_date.split('T')[0], '%Y-%m-%d')
+                # Añadir horas para fin del día si es end_date
+                end_date = end_date.replace(hour=23, minute=59, second=59)
+
+            print(f"Objetos datetime creados: start={start_date}, end={end_date}")
+
+            # Filtrar DataFrame
+            df = df[(df['timestamp'] >= start_date) & (df['timestamp'] <= end_date)]
+            print(f"Datos filtrados. Filas restantes: {len(df)}")
+
+            if len(df) == 0:
+                print("¡ADVERTENCIA! El filtrado resultó en 0 filas. Usando todos los datos disponibles.")
+                df = pd.read_parquet(r"data\data.parquet")
+                df = df.sort_values('timestamp')
+
+        except Exception as e:
+            print(f"Error al filtrar por fechas: {e}")
+            import traceback
+            traceback.print_exc()
 
     # Crear una figura con subplots: gráfica principal y volumen más RSI abajo
     fig = make_subplots(
@@ -349,64 +404,16 @@ def crear_grafica():
         row=1, col=1
     )
 
-    # Añadir indicadores de tendencia
-    # if 'pct_cambio_7d' in df.columns and 'pct_cambio_30d' in df.columns:
-    #     fig.add_trace(
-    #         go.Scatter(
-    #             x=df['timestamp'],
-    #             y=df['pct_cambio_7d'] * 100,
-    #             line=dict(color='#7b5dfa', width=1.5),  # Neon púrpura
-    #             name='SMA 200'
-    #         ),
-    #         row=1, col=1
-    #     )
-
-    # if 'tendencia_futura_7d' in df.columns and 'tendencia_futura_30d' in df.columns:
-    #     tend_7d = df['tendencia_futura_7d'].iloc[-1]
-    #     tend_30d = df['tendencia_futura_30d'].iloc[-1]
-    #
-    #     tend_text = f"Tendencia 7D: {tend_7d}<br>Tendencia 30D: {tend_30d}"
-    #
-    #     fig.add_annotation(
-    #         x=0.85,
-    #         y=0.95,
-    #         xref="paper",
-    #         yref="paper",
-    #         text=tend_text,
-    #         showarrow=False,
-    #         font=dict(size=12, color="#ffffff"),
-    #         bgcolor="rgba(0, 0, 0, 0.5)",
-    #         bordercolor="#00b4ff",
-    #         borderwidth=1,
-    #         borderpad=4,
-    #         align="left"
-    #     )
-
-    # Añadir herramientas avanzadas
-    # fig.update_xaxes(
-    #     rangeslider_visible=False,
-    #     rangeselector=dict(
-    #         buttons=[
-    #             dict(count=1, label="1D", step="day", stepmode="backward"),
-    #             dict(count=7, label="1W", step="day", stepmode="backward"),
-    #             dict(count=1, label="1M", step="month", stepmode="backward"),
-    #             dict(count=3, label="3M", step="month", stepmode="backward"),
-    #             dict(count=6, label="6M", step="month", stepmode="backward"),
-    #             dict(count=1, label="1Y", step="year", stepmode="backward"),
-    #             dict(step="all", label="MAX")
-    #         ],
-    #         bgcolor='rgba(0,0,0,0.7)',
-    #         activecolor='#00b4ff'
-    #     ),
-    #     row=1, col=1
-    # )
-
     # Añadir herramientas de crosshair para información precisa al pasar el cursor
     fig.update_xaxes(showspikes=True, spikecolor='white', spikesnap='cursor', spikemode='across')
     fig.update_yaxes(showspikes=True, spikecolor='white', spikethickness=1)
 
     # Configuración para dispositivos móviles
     fig.update_layout(autosize=True)
+
+    params_string = ""
+    if start_date and end_date:
+        params_string = f"?start={start_date.isoformat()}&end={end_date.isoformat()}"
 
     # Guardar la gráfica como archivo HTML con configuración para que coincida con el estilo de la página
     config = {
@@ -425,13 +432,13 @@ def crear_grafica():
     }
 
     fig.write_html(
-        "static/grafica_bitcoin.html",
+        f"static/grafica_bitcoin.html{params_string}",
         config=config,
         include_plotlyjs=True,
         full_html=True
     )
 
-    return "Gráfica creada con éxito"
+    print("Gráfica creada con éxito")
 
 @app.on_event("startup")
 def startup_event():
@@ -444,6 +451,17 @@ def startup_event():
 
     # Cargar el modelo como atributo de la aplicación
     # app.model = load('models/final_model.joblib')
+
+
+# Endpoint para obtener la gráfica filtrada por fechas
+@app.get("/static/grafica_bitcoin.html")
+async def get_filtered_chart(request: Request):
+    # Si se proporcionan parámetros de fecha, crear una nueva gráfica filtrada
+    if "start" in request.query_params and "end" in request.query_params:
+        crear_grafica(request)
+
+    # Devolver el archivo HTML
+    return FileResponse("static/grafica_bitcoin.html")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):

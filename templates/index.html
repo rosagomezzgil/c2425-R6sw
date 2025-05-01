@@ -16,10 +16,8 @@
                 <span>CryptoVision Insights</span>
             </div>
             <div class="nav-links">
-                <a href="#" class="nav-link">Mercado</a>
-                <a href="#" class="nav-link">Gráficos</a>
-                <a href="#" class="nav-link">Portafolio</a>
-                <a href="#" class="nav-link">Noticias</a>
+                <a href="https://www.binance.com/es" target="_blank" class="nav-link">Mercado</a>
+                <a href="#graph" class="nav-link">Gráfica</a>
             </div>
         </nav>
     </header>
@@ -81,10 +79,11 @@
                 <input type="date" class="date-input" id="start-date" aria-label="Fecha de inicio">
                 <input type="date" class="date-input" id="end-date" aria-label="Fecha de fin">
                 <button class="date-button" id="update-chart">Actualizar Gráfico</button>
+                <div id="update-status" class="update-status"></div>
             </div>
 
-            <div class="graph-container">
-                <iframe src="/static/grafica_bitcoin.html" class="graph-iframe" title="Gráfico de precios de Bitcoin"></iframe>
+            <div class="graph-container" id="graph">
+                <iframe src="/static/grafica_bitcoin.html" class="graph-iframe" title="Gráfico de precios de Bitcoin" id="chart-iframe"></iframe>
             </div>
         </div>
     </main>
