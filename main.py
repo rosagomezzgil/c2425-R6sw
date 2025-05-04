@@ -383,8 +383,8 @@ async def startup_event():
         create_chart()
 
         # Load prediction models
-        app.model7 = load('models/modelo_7d.joblib')
-        app.model30 = load('models/modelo_30d.joblib')
+        app.model7 = load('models/SVR.joblib')
+        app.model30 = load('models/XGB.joblib')
 
         print("Startup completed successfully")
     except Exception as e:
@@ -428,8 +428,7 @@ async def get_current_bitcoin():
         X_last = pred_30d.drop(columns=['timestamp', 'pct_cambio_30d']).iloc[-1].to_numpy().reshape(1, -1)
 
         # Predict percentage change
-        # change_30d = app.model30.predict(X_last)[0]
-        change_30d = 1
+        change_30d = app.model30.predict(X_last)[0]
         print(f"30-day predicted change: {change_30d}%")
 
         # Calculate average price
