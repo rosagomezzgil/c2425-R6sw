@@ -39,7 +39,7 @@ body {
     top: 0;
     z-index: 100;
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px); /* Para Safari */
+    -webkit-backdrop-filter: blur(10px);
     width: 100%;
 }
 
@@ -75,7 +75,7 @@ body {
 
 .container {
     width: 100%;
-    max-width: 1400px; /* Aumentado para tomar más espacio */
+    max-width: 1100px;
     margin: 0 auto;
     padding: 2rem;
     flex: 1;
@@ -116,7 +116,7 @@ body {
 .hero-subtitle {
     font-size: 1.2rem;
     color: var(--secondary-text);
-    max-width: 800px; /* Aumentado para mejor legibilidad */
+    max-width: 800px;
     margin-bottom: 2rem;
 }
 
@@ -128,7 +128,7 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     border: 1px solid var(--border-color);
     width: 100%;
-    max-width: 800px; /* Aumentado para tomar más espacio */
+    max-width: 1100px;
 }
 
 .prediction-form h3 {
@@ -231,9 +231,10 @@ body {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    margin: 2rem 0;
+    margin: 2rem auto;
     border: 1px solid var(--border-color);
     width: 100%;
+    max-width: 1100px;
 }
 
 .card-header {
@@ -262,8 +263,9 @@ body {
     gap: 1rem;
     flex-wrap: wrap;
     justify-content: center;
-    margin: 1.5rem;
+    margin: 1.5rem auto;
     padding: 0 1rem;
+    max-width: 900px;
 }
 
 .date-input {
@@ -314,6 +316,8 @@ body {
     background-color: var(--card-bg);
     border-radius: 8px;
     overflow: hidden;
+    max-width: 1100px;
+    margin: 0 auto;
 }
 
 .graph-iframe {
@@ -326,17 +330,19 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: 1.5rem;
-    margin: 2rem 0;
-    justify-content: center;
+    justify-content: space-between;
     width: 100%;
+    max-width: 1100px;
+    margin: 2rem auto;
 }
 
 .data-card {
     background-color: var(--card-bg);
     border-radius: 10px;
     padding: 1.5rem;
-    flex: 1;
-    min-width: 250px; /* Aumentado para mejor visualización */
+    flex: 1 1 calc(33.333% - 1rem);
+    max-width: calc(33.333% - 1rem);
+    min-width: 0;
     border: 1px solid var(--border-color);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
@@ -368,12 +374,10 @@ body {
     justify-content: center;
 }
 
-/* Compatibilidad con clases usadas en el JS */
 #current-arrow, #arrow-7d, #arrow-30d {
     display: inline-block;
 }
 
-/* Estilos para el loader */
 .loading {
     display: inline-block;
     width: 20px;
@@ -413,7 +417,6 @@ body {
     font-size: 0.9rem;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .hero-title {
         font-size: 2.5rem;
@@ -428,7 +431,8 @@ body {
     }
 
     .data-card {
-        min-width: 100%;
+        max-width: 100%;
+        width: 100%;
     }
 
     .input-group {
