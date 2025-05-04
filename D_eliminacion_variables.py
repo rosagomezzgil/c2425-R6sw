@@ -18,10 +18,10 @@ def crear_conjunto_7d(df):
 
     # Crear df_7d quitando columnas de horizonte 30 días
     columnas_SVR = ['timestamp'] + \
-                    ['volatilidad_200_sp500', 'EMA_50_hashrate', 'SMA_200_hashrate', 'SMA_200_dxy',
-                    'volatilidad_200_binance', 'volatilidad_200_mDbinance', 'SMA_200_nasdaq',
-                    'EMA_50_mDbinance', 'SMA_200_mDbinance', 'SMA_200_binance', 'EMA_50_binance',
-                    'bitcoin_gtrends', 'SMA_200_sp500', 'volatilidad_50_binance', 'volatilidad_50_mDbinance'] \
+                    ['volatilidad_200_sp500', 'EMA_50_hashrate', 'SMA_200_dxy', 'SMA_200_nasdaq',
+                     'SMA_200_sp500', 'SMA_200_hashrate', 'bitcoin_gtrends', 'EMA_50_mDbinance',
+                     'EMA_50_binance', 'close_nasdaq', 'volatilidad_200_binance', 'volatilidad_200_mDbinance',
+                     'EMA_50_sp500', 'volatilidad_50_binance', 'volatilidad_50_sp500'] \
         + ['pct_cambio_7d']
 
     df_7d = df[columnas_SVR]
@@ -40,6 +40,26 @@ def crear_conjunto_7d(df):
 
 def crear_conjunto_30d(df):
     # Crear df_30d quitando columnas de horizonte 7 días
+    columnas_XGBoost = ['close_binance', 'volume_binance', 'trades_binance', 'SMA_200_binance',
+       'EMA_50_binance', 'var_diaria_binance', 'volatilidad_50_binance',
+       'volatilidad_200_binance', 'rango_dia_binance', 'momentum_50_binance',
+       'momentum_200_binance', 'RSI_binance', 'fear_greed_index_fg',
+       'bitcoin_gtrends', 'hashrate_hashrate', 'SMA_200_hashrate',
+       'EMA_50_hashrate', 'close_mDbinance', 'volume_mDbinance',
+       'trades_mDbinance', 'var_diaria_mDbinance',
+       'volatilidad_50_mDbinance', 'volatilidad_200_mDbinance',
+       'rango_dia_mDbinance', 'momentum_50_mDbinance',
+       'momentum_200_mDbinance', 'SMA_200_mDbinance', 'EMA_50_mDbinance',
+       'RSI_mDbinance', 'close_sp500', 'volume_sp500', 'SMA_200_sp500',
+       'EMA_50_sp500', 'volatilidad_50_sp500', 'volatilidad_200_sp500',
+       'momentum_50_sp500', 'momentum_200_sp500', 'var_diaria_sp500',
+       'rango_dia_sp500', 'RSI_sp500', 'close_nasdaq', 'volume_nasdaq',
+       'SMA_200_nasdaq', 'EMA_50_nasdaq', 'volatilidad_50_nasdaq',
+       'volatilidad_200_nasdaq', 'momentum_50_nasdaq', 'momentum_200_nasdaq',
+       'var_diaria_nasdaq', 'rango_dia_nasdaq', 'RSI_nasdaq', 'close_dxy',
+       'SMA_200_dxy', 'EMA_50_dxy', 'volatilidad_50_dxy',
+       'volatilidad_200_dxy', 'momentum_50_dxy', 'momentum_200_dxy',
+       'var_diaria_dxy', 'rango_dia_dxy', 'RSI_dxy']
     df_30d = df.drop(columns=['pct_cambio_7d'])
 
     # Crear df_pred_30d con las primeras 30 filas

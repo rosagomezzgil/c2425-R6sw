@@ -52,6 +52,7 @@ body {
 .logo-icon {
     margin-right: 10px;
     font-size: 1.8rem;
+    color: var(--bitcoin-color);
 }
 
 .nav-links {
@@ -115,33 +116,19 @@ body {
     margin-bottom: 2rem;
 }
 
-.bitcoin-logo {
-    width: 200px;
-    height: 200px;
-    object-fit: contain;
-    margin: 2rem 0;
-    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6));
-    animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
-    100% { transform: translateY(0px); }
-}
-
-.investment-form {
-    background-color: #1e2130;
+/* Cambiar investment-form a prediction-form para mantener consistencia con el HTML corregido */
+.prediction-form {
+    background-color: var(--card-bg);
     border-radius: 8px;
     padding: 20px;
-    margin: 20px 0;
+    margin: 20px auto;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     border: 1px solid var(--border-color);
     width: 100%;
     max-width: 600px;
 }
 
-.investment-form h3 {
+.prediction-form h3 {
     margin-top: 0;
     margin-bottom: 15px;
     color: var(--text-color);
@@ -179,7 +166,8 @@ body {
     box-shadow: 0 0 0 2px rgba(0, 180, 255, 0.2);
 }
 
-.investment-btn {
+/* Cambiar investment-btn a prediction-btn para mantener consistencia con el HTML corregido */
+.prediction-btn {
     background-color: var(--bitcoin-color);
     color: white;
     border: none;
@@ -196,15 +184,23 @@ body {
     text-align: center;
 }
 
-.investment-btn:hover {
+.prediction-btn:hover {
     background-color: #e37b00;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(247, 147, 26, 0.3);
 }
 
-.investment-btn:active {
+.prediction-btn:active {
     transform: translateY(0);
     box-shadow: none;
+}
+
+/* Agregar clase para el resultado de predicción */
+#prediction-result {
+    margin-top: 15px;
+    background-color: rgba(0, 180, 255, 0.05);
+    border-radius: 4px;
+    padding: 8px;
 }
 
 .profit-info {
@@ -221,13 +217,12 @@ body {
     text-align: center;
 }
 
-.profit-positive {
-    background-color: rgba(11, 246, 126, 0.1);
+/* Clases para cambios positivos y negativos */
+.positive-change {
     color: var(--neon-green);
 }
 
-.profit-negative {
-    background-color: rgba(255, 82, 82, 0.1);
+.negative-change {
     color: var(--error-color);
 }
 
@@ -266,7 +261,8 @@ body {
     gap: 1rem;
     flex-wrap: wrap;
     justify-content: center;
-    margin: 2rem 0;
+    margin: 1.5rem;
+    padding: 0 1rem;
 }
 
 .date-input {
@@ -339,6 +335,7 @@ body {
     border: 1px solid var(--border-color);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
+    text-align: center;
 }
 
 .data-card:hover {
@@ -363,17 +360,31 @@ body {
     gap: 0.5rem;
     margin-top: 0.5rem;
     font-size: 0.9rem;
+    justify-content: center;
 }
 
-.positive {
-    color: var(--neon-green);
+/* Compatibilidad con clases usadas en el JS */
+#current-arrow, #arrow-7d, #arrow-30d {
+    display: inline-block;
 }
 
-.negative {
-    color: var(--error-color);
+/* Compatibilidad con los estilos para el loader */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(123, 93, 250, 0.2);
+    border-radius: 50%;
+    border-top-color: var(--neon-purple);
+    animation: spin 1s ease-in-out infinite;
+    margin-left: 10px;
 }
 
-.error-message {
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.load-error {
     background-color: rgba(255, 82, 82, 0.1);
     border: 1px solid var(--error-color);
     color: var(--error-color);
@@ -381,11 +392,6 @@ body {
     border-radius: 4px;
     margin: 10px 0;
     text-align: center;
-}
-
-.loading {
-    opacity: 0.6;
-    pointer-events: none;
 }
 
 .footer {
@@ -433,7 +439,7 @@ body {
         width: 100%;
     }
 
-    .investment-btn {
+    .prediction-btn {
         width: 100%;
         max-width: none;
     }
