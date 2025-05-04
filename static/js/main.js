@@ -91,6 +91,80 @@ function loadInitialData() {
         });
 }
 
+// Make prediction
+async function makePrediction() {
+    try {
+        // Get the selected date
+        const predictionDate = document.getElementById('prediction-date').value;
+        const resultContainer = document.getElementById('prediction-result');
+        const profitContainer = document.getElementById('prediction-profit');
+
+        if (!predictionDate) {
+            resultContainer.innerHTML = '<p class="error">Por favor, seleccione una fecha</p>';
+            return;
+        }
+
+        // Show loading state
+        resultContainer.innerHTML = '<p>Calculando predicción...</p>';
+        profitContainer.textContent = 'Calculando...';
+
+        // Make API request with the selected date
+        const response = await fetch(`/api/bitcoin/prediction?prediction_date=${predictionDate}`);
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Format numbers for display
+        const currentPrice = new Intl.NumberFormat('es-ES', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2
+        }).format(data.current_price);
+
+        const predictedPrice = new Intl.NumberFormat('es-ES', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2
+        }).format(data.price_30d);
+
+        // Calculate potential profit percentage
+        const profitPercentage = data.change_30d.toFixed(2);
+
+        // Display results
+        resultContainer.innerHTML = `
+            <div class="prediction-result-container">
+                <p><strong>Precio actual:</strong> ${currentPrice}</p>
+                <p><strong>Precio predicho para ${formatDate(predictionDate)}:</strong> ${predictedPrice}</p>
+                <p><strong>Cambio esperado:</strong> ${profitPercentage}%</p>
+            </div>
+        `;
+
+        // Display profit information with color coding
+        const profitClass = data.change_30d >= 0 ? 'positive-profit' : 'negative-profit';
+        profitContainer.textContent = `${profitPercentage}%`;
+        profitContainer.className = `profit-amount ${profitClass}`;
+
+    } catch (error) {
+        console.error('Error making prediction:', error);
+        document.getElementById('prediction-result').innerHTML =
+            `<p class="error">Error al obtener la predicción: ${error.message}</p>`;
+        document.getElementById('prediction-profit').textContent = 'Error';
+    }
+}
+
+// Helper function to format date in Spanish format
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
 // Update chart with new date range
 function updateChart() {
     // Get DOM elements
@@ -172,6 +246,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load initial bitcoin data
     loadInitialData();
+
+    // Set up prediction form button event listener
+    const predictionBtn = document.getElementById('predict-btn');
+
+    if (predictionBtn) {
+        predictionBtn.addEventListener('click', makePrediction);
+    } else {
+        console.error('Prediction form button not found');
+    }
 
     // Set up update chart button event listener
     const updateChartBtn = document.getElementById('update-chart');

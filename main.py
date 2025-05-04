@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import datetime
-from fastapi import FastAPI, Request, HTTPException, Form
+from fastapi import FastAPI, Request, HTTPException, Query
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -15,6 +15,7 @@ import numpy as np
 import os
 import traceback
 from pathlib import Path
+from typing import Optional
 
 from G_pipeline import pipeline
 
@@ -130,6 +131,7 @@ class BitcoinPrediction(BaseModel):
     price_30d: float
     change_7d: float
     change_30d: float
+    prediction_date: Optional[str] = None
 
 # SVR predictions
 def SVRprediction(input: SVRinput):
@@ -643,6 +645,134 @@ async def get_current_bitcoin():
             price_30d=price_30d,
             change_7d=change_7d,
             change_30d=change_30d
+        )
+    except Exception as e:
+        print(f"Error getting Bitcoin predictions: {e}")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="Error retrieving Bitcoin data")
+
+
+@app.get("/api/bitcoin/prediction", response_model=BitcoinPrediction)
+async def get_bitcoin_prediction(prediction_date: str = Query(None)):
+    try:
+        # Load data from Parquet files
+        df = pd.read_parquet(DATA_PATH)
+        pred_7d = pd.read_parquet(PRED_7D_PATH)
+        pred_30d = pd.read_parquet(PRED_30D_PATH)
+
+        # Ensure data is sorted by date
+        df = df.sort_values('timestamp')
+        pred_7d = pred_7d.sort_values('timestamp')
+        pred_30d = pred_30d.sort_values('timestamp')
+
+        # Validate that the latest timestamps match
+        if df.timestamp.iloc[-1] != pred_7d.timestamp.iloc[-1] or df.timestamp.iloc[-1] != pred_30d.timestamp.iloc[-1]:
+            print("WARNING: Latest timestamps don't match between datasets")
+
+        # Get current date if no prediction date is provided
+        if prediction_date is None:
+            # Use current date for prediction
+            current_price = df.close_binance.iloc[-1]
+
+            # 7-DAY PREDICTION with current data
+            X_last_7d = pred_7d.drop(columns=['timestamp', 'pct_cambio_7d']).iloc[-1].to_numpy().reshape(1, -1)
+            change_7d = app.model7.predict(X_last_7d)[0]
+            precio_medio_7d = df['close_binance'].rolling(window=7).mean().iloc[-1]
+            price_7d = precio_medio_7d * (1 + change_7d / 100)
+
+            # 30-DAY PREDICTION with current data
+            X_last_30d = pred_30d.drop(columns=['timestamp', 'pct_cambio_30d']).iloc[-1].to_numpy().reshape(1, -1)
+            change_30d = app.model30.predict(X_last_30d)[0]
+            precio_medio_30d = df['close_binance'].rolling(window=30).mean().iloc[-1]
+            price_30d = precio_medio_30d * (1 + change_30d / 100)
+
+        else:
+            # Convert string date to datetime
+            target_date = pd.to_datetime(prediction_date)
+            latest_date = df.timestamp.iloc[-1]
+
+            # Calculate days between latest data and target date
+            days_diff = (target_date - latest_date).days
+
+            if days_diff <= 0:
+                # For historical dates, use actual data if available
+                historical_row = df[df.timestamp == target_date]
+                if not historical_row.empty:
+                    current_price = df.close_binance.iloc[-1]  # Current price is still the latest
+                    price_7d = historical_row.close_binance.iloc[0]  # Historical price
+                    price_30d = historical_row.close_binance.iloc[0]  # Historical price
+
+                    # Calculate changes
+                    change_7d = ((price_7d - current_price) / current_price) * 100
+                    change_30d = ((price_30d - current_price) / current_price) * 100
+                else:
+                    raise HTTPException(status_code=404, detail="No data available for the specified date")
+            else:
+                # For future dates, use the model to predict
+                current_price = df.close_binance.iloc[-1]
+
+                # Determine which model to use based on days difference
+                if days_diff <= 7:
+                    # Use 7-day model
+                    X_last = pred_7d.drop(columns=['timestamp', 'pct_cambio_7d']).iloc[-1].to_numpy().reshape(1, -1)
+                    change = app.model7.predict(X_last)[0]
+                    precio_medio = df['close_binance'].rolling(window=7).mean().iloc[-1]
+
+                    # Scale the prediction based on days
+                    scaling_factor = days_diff / 7
+                    adjusted_change = change * scaling_factor
+
+                    # Calculate predictions
+                    price_prediction = precio_medio * (1 + adjusted_change / 100)
+                    price_7d = price_prediction
+                    price_30d = price_prediction  # Same as 7d for now
+                    change_7d = adjusted_change
+                    change_30d = adjusted_change  # Same as 7d for now
+
+                elif days_diff <= 30:
+                    # Use 30-day model
+                    X_last = pred_30d.drop(columns=['timestamp', 'pct_cambio_30d']).iloc[-1].to_numpy().reshape(1, -1)
+                    change = app.model30.predict(X_last)[0]
+                    precio_medio = df['close_binance'].rolling(window=30).mean().iloc[-1]
+
+                    # Scale the prediction based on days
+                    scaling_factor = days_diff / 30
+                    adjusted_change = change * scaling_factor
+
+                    # Calculate predictions
+                    price_prediction = precio_medio * (1 + adjusted_change / 100)
+                    price_7d = price_prediction
+                    price_30d = price_prediction
+                    change_7d = adjusted_change
+                    change_30d = adjusted_change
+                else:
+                    # For dates beyond 30 days, use the 30-day model but with a warning
+                    X_last = pred_30d.drop(columns=['timestamp', 'pct_cambio_30d']).iloc[-1].to_numpy().reshape(1, -1)
+                    change = app.model30.predict(X_last)[0]
+                    precio_medio = df['close_binance'].rolling(window=30).mean().iloc[-1]
+
+                    # For long-term predictions, we'll be more conservative
+                    # Assume change grows at a diminishing rate
+                    scaling_factor = min(days_diff / 30, 3)  # Cap at 3x for very long-term
+                    adjusted_change = change * scaling_factor
+
+                    # Calculate predictions
+                    price_prediction = precio_medio * (1 + adjusted_change / 100)
+                    price_7d = price_prediction
+                    price_30d = price_prediction
+                    change_7d = adjusted_change
+                    change_30d = adjusted_change
+
+                    print(f"Warning: Prediction for {days_diff} days ahead may be less accurate")
+
+        # Return prediction results
+        return BitcoinPrediction(
+            current_price=current_price,
+            price_7d=price_7d,
+            price_30d=price_30d,
+            change_7d=change_7d,
+            change_30d=change_30d,
+            prediction_date=prediction_date
         )
     except Exception as e:
         print(f"Error getting Bitcoin predictions: {e}")
