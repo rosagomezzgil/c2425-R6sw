@@ -73,7 +73,7 @@ function loadInitialData() {
     // Show loading indicator
     showLoading();
 
-    fetch('/api/bitcoin/current')
+    fetch('/api/bitcoin/prediction')
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP Error: ${response.status}`);
@@ -143,7 +143,7 @@ async function makePrediction() {
         `;
 
         // Display profit information with color coding
-        const profitClass = data.change_30d >= 0 ? 'positive-profit' : 'negative-profit';
+        const profitClass = data.change_30d >= 0 ? 'positive-change' : 'negative-change';
         profitContainer.textContent = `${profitPercentage}%`;
         profitContainer.className = `profit-amount ${profitClass}`;
 

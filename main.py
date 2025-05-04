@@ -593,65 +593,6 @@ async def startup_event():
         print(f"Error during startup: {e}")
         traceback.print_exc()
 
-
-@app.get("/api/bitcoin/current", response_model=BitcoinPrediction)
-async def get_current_bitcoin():
-    try:
-        # Load data from Parquet files
-        df = pd.read_parquet(DATA_PATH)
-        pred_7d = pd.read_parquet(PRED_7D_PATH)
-        pred_30d = pd.read_parquet(PRED_30D_PATH)
-
-        # Ensure data is sorted by date
-        df = df.sort_values('timestamp')
-        pred_7d = pred_7d.sort_values('timestamp')
-        pred_30d = pred_30d.sort_values('timestamp')
-
-        # Validate that the latest timestamps match
-        if df.timestamp.iloc[-1] != pred_7d.timestamp.iloc[-1] or df.timestamp.iloc[-1] != pred_30d.timestamp.iloc[-1]:
-            print("WARNING: Latest timestamps don't match between datasets")
-
-        # 7-DAY PREDICTION
-        # Prepare data for prediction
-        X_last = pred_7d.drop(columns=['timestamp', 'pct_cambio_7d']).iloc[-1].to_numpy().reshape(1, -1)
-
-        # Predict percentage change
-        change_7d = app.model7.predict(X_last)[0]
-        print(f"7-day predicted change: {change_7d}%")
-
-        # Calculate average price
-        precio_medio_7d = df['close_binance'].rolling(window=7).mean().iloc[-1]
-
-        # Calculate future price
-        price_7d = precio_medio_7d * (1 + change_7d / 100)
-
-        # 30-DAY PREDICTION
-        # Prepare data for prediction
-        X_last = pred_30d.drop(columns=['timestamp', 'pct_cambio_30d']).iloc[-1].to_numpy().reshape(1, -1)
-
-        # Predict percentage change
-        change_30d = app.model30.predict(X_last)[0]
-        print(f"30-day predicted change: {change_30d}%")
-
-        # Calculate average price
-        precio_medio_30d = df['close_binance'].rolling(window=30).mean().iloc[-1]
-
-        # Calculate future price
-        price_30d = precio_medio_30d * (1 + change_30d / 100)
-
-        return BitcoinPrediction(
-            current_price=df.close_binance.iloc[-1],
-            price_7d=price_7d,
-            price_30d=price_30d,
-            change_7d=change_7d,
-            change_30d=change_30d
-        )
-    except Exception as e:
-        print(f"Error getting Bitcoin predictions: {e}")
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="Error retrieving Bitcoin data")
-
-
 @app.get("/api/bitcoin/prediction", response_model=BitcoinPrediction)
 async def get_bitcoin_prediction(prediction_date: str = Query(None)):
     try:
