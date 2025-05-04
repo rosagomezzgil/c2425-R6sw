@@ -428,7 +428,8 @@ async def get_current_bitcoin():
         X_last = pred_30d.drop(columns=['timestamp', 'pct_cambio_30d']).iloc[-1].to_numpy().reshape(1, -1)
 
         # Predict percentage change
-        change_30d = app.model30.predict(X_last)[0]
+        # change_30d = app.model30.predict(X_last)[0]
+        change_30d = 1
         print(f"30-day predicted change: {change_30d}%")
 
         # Calculate average price
