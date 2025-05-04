@@ -13,12 +13,12 @@ function updatePredictionUI(data) {
 
     document.getElementById('price-7d').innerText = formatPrice(data.price_7d);
     document.getElementById('percent-7d').innerText = (data.change_7d > 0 ? '+' : '') + data.change_7d.toFixed(2) + '%';
-    document.getElementById('change-7d').className = data.change_7d >= 0 ? 'data-change positive' : 'data-change negative';
+    document.getElementById('change-7d').className = data.change_7d >= 0 ? 'positive-change' : 'negative-change';
     document.getElementById('arrow-7d').innerText = data.change_7d >= 0 ? '↑' : '↓';
 
     document.getElementById('price-30d').innerText = formatPrice(data.price_30d);
     document.getElementById('percent-30d').innerText = (data.change_30d > 0 ? '+' : '') + data.change_30d.toFixed(2) + '%';
-    document.getElementById('change-30d').className = data.change_30d >= 0 ? 'data-change positive' : 'data-change negative';
+    document.getElementById('change-30d').className = data.change_30d >= 0 ? 'positive-change' : 'negative-change';
     document.getElementById('arrow-30d').innerText = data.change_30d >= 0 ? '↑' : '↓';
 }
 

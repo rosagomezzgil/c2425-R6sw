@@ -5,10 +5,12 @@
     --dark-bg: #0c0e12;
     --card-bg: #1a1d25;
     --text-color: #ffffff;
+    --primary-text: #ffffff;
     --secondary-text: #a0a0a0;
     --error-color: #ff5252;
     --border-color: rgba(255, 255, 255, 0.05);
     --bitcoin-color: #f7931a;
+    --primary-bg: #121212;
 }
 
 * {
@@ -218,14 +220,6 @@ body {
     text-align: center;
 }
 
-.positive-change {
-    color: var(--neon-green);
-}
-
-.negative-change {
-    color: var(--error-color);
-}
-
 .card {
     background-color: var(--card-bg);
     border-radius: 12px;
@@ -365,7 +359,7 @@ body {
     font-weight: 700;
 }
 
-.data-change {
+#change-7d, #change-30d {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -374,8 +368,16 @@ body {
     justify-content: center;
 }
 
-#current-arrow, #arrow-7d, #arrow-30d {
+#arrow-7d, #arrow-30d {
     display: inline-block;
+}
+
+.positive-change {
+    color: var(--neon-green);
+}
+
+.negative-change {
+    color: var(--error-color);
 }
 
 .loading {
