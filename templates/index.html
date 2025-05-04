@@ -29,42 +29,42 @@
         </section>
 
         <!-- Formulario de inversión -->
-        <div class="investment-form">
-            <h3>Simulador de Inversión</h3>
+        <div class="prediction-form">
+            <h3>Predicción por Fecha</h3>
             <div class="input-group">
-                <label for="investment-amount">Cantidad a invertir:</label>
-                <input type="number" id="investment-amount" placeholder="Ingrese cantidad en USD" min="1" step="1" aria-label="Cantidad de inversión en dólares">
+                <label for="prediction-date">Fecha a predecir:</label>
+                <input type="date" id="prediction-date" aria-label="Fecha para la predicción">
             </div>
-            <button id="calculate-btn" class="investment-btn">Calcular Potencial Rendimiento</button>
+            <button id="predict-btn" class="prediction-btn">Obtener Predicción</button>
         </div>
 
         <div class="data-row">
             <div class="data-card">
                 <div class="data-label">Precio Actual</div>
-                <div class="data-value" id="current-price">$71,235.00</div>
+                <div class="data-value" id="current-price"></div>
                 <div class="data-change" id="current-change">
-                    <span id="current-percent">--</span>
-                    <span id="current-arrow">--</span>
+                    <span id="current-percent"></span>
+                    <span id="current-arrow"></span>
                 </div>
                 <div class="profit-amount" id="current-profit"></div>
             </div>
 
             <div class="data-card">
                 <div class="data-label">7 días</div>
-                <div class="data-value" id="price-7d">--</div>
+                <div class="data-value" id="price-7d"></div>
                 <div class="data-change" id="change-7d">
-                    <span id="percent-7d">--</span>
-                    <span id="arrow-7d">--</span>
+                    <span id="percent-7d"></span>
+                    <span id="arrow-7d"></span>
                 </div>
                 <div class="profit-amount" id="profit-7d"></div>
             </div>
 
             <div class="data-card">
                 <div class="data-label">30 días</div>
-                <div class="data-value" id="price-30d">--</div>
+                <div class="data-value" id="price-30d"></div>
                 <div class="data-change" id="change-30d">
-                    <span id="percent-30d">--</span>
-                    <span id="arrow-30d">--</span>
+                    <span id="percent-30d"></span>
+                    <span id="arrow-30d"></span>
                 </div>
                 <div class="profit-amount" id="profit-30d"></div>
             </div>

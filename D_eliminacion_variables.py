@@ -17,7 +17,14 @@ def eliminar_variables(df):
 def crear_conjunto_7d(df):
 
     # Crear df_7d quitando columnas de horizonte 30 días
-    df_7d = df.drop(columns=['pct_cambio_30d'])
+    columnas_SVR = ['timestamp'] + \
+                    ['volatilidad_200_sp500', 'EMA_50_hashrate', 'SMA_200_hashrate', 'SMA_200_dxy',
+                    'volatilidad_200_binance', 'volatilidad_200_mDbinance', 'SMA_200_nasdaq',
+                    'EMA_50_mDbinance', 'SMA_200_mDbinance', 'SMA_200_binance', 'EMA_50_binance',
+                    'bitcoin_gtrends', 'SMA_200_sp500', 'volatilidad_50_binance', 'volatilidad_50_mDbinance'] \
+        + ['pct_cambio_7d']
+
+    df_7d = df[columnas_SVR]
 
     # Crear df_pred_7d con las primeras 7 filas
     df_pred_7d = df_7d.tail(7)

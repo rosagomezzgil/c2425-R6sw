@@ -27,6 +27,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+from joblib import load
 
 from G_pipeline import pipeline
 
@@ -36,81 +37,6 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
-
-
-# Modelo para la solicitud de inversión
-class InvestmentRequest(BaseModel):
-    investment_amount: float
-
-
-# Modelo para la respuesta de predicción
-class BitcoinPrediction(BaseModel):
-    current_price: float
-    price_7d: float
-    price_30d: float
-    change_7d: float
-    change_30d: float
-
-
-# Esta es una función simulada para demostración
-def predict_bitcoin_price(days_ahead: int = 0) -> float:
-    """Simula una predicción del precio de Bitcoin"""
-    # En un caso real, aquí llamarías a tu modelo entrenado
-    # Esta es solo una simulación
-    base_price = 71235.00  # Precio base actual
-
-    # Simulación simple de variación
-    if days_ahead == 0:
-        return base_price
-    elif days_ahead == 7:
-        # Simulación de aumento del 3.5% en 7 días
-        return base_price * 1.035
-    elif days_ahead == 30:
-        # Simulación de aumento del 8.2% en 30 días
-        return base_price * 1.082
-    else:
-        # Para cualquier otro horizonte temporal
-        return 0
-
-
-# Endpoint para obtener el precio actual y predicciones
-@app.get("/api/bitcoin/current", response_model=BitcoinPrediction)
-def get_current_bitcoin():
-    current_price = predict_bitcoin_price(0)
-    price_7d = predict_bitcoin_price(7)
-    price_30d = predict_bitcoin_price(30)
-
-    return BitcoinPrediction(
-        current_price=current_price,
-        price_7d=price_7d,
-        price_30d=price_30d,
-        change_7d=((price_7d - current_price) / current_price) * 100,
-        change_30d=((price_30d - current_price) / current_price) * 100
-    )
-
-
-# Endpoint para calcular el rendimiento de una inversión
-@app.post("/api/bitcoin/investment", response_model=BitcoinPrediction)
-def calculate_investment(request: InvestmentRequest):
-    if request.investment_amount <= 0:
-        raise HTTPException(status_code=400, detail="La cantidad de inversión debe ser positiva")
-
-    # Obtener predicciones de precios
-    current_price = predict_bitcoin_price(0)
-    price_7d = predict_bitcoin_price(7)
-    price_30d = predict_bitcoin_price(30)
-
-    # Calcular cambios porcentuales
-    change_7d = ((price_7d - current_price) / current_price) * 100
-    change_30d = ((price_30d - current_price) / current_price) * 100
-
-    return BitcoinPrediction(
-        current_price=current_price,
-        price_7d=price_7d,
-        price_30d=price_30d,
-        change_7d=change_7d,
-        change_30d=change_30d
-    )
 
 # Generar la gráfica de velas al inicio
 def crear_grafica(request: Request = None):
@@ -450,7 +376,68 @@ def startup_event():
     crear_grafica()
 
     # Cargar el modelo como atributo de la aplicación
-    # app.model = load('models/final_model.joblib')
+    app.model7 = load('models/modelo_7d.joblib')
+    # app.model30 = load('models/modelo_30d.joblib')
+
+# Modelo para la respuesta de predicción
+class BitcoinPrediction(BaseModel):
+    current_price: float
+    price_7d: float
+    price_30d: float
+    change_7d: float
+    change_30d: float
+
+# Endpoint para obtener el precio actual y predicciones
+@app.get("/api/bitcoin/current", response_model=BitcoinPrediction)
+def get_current_bitcoin():
+    # Cargar los datos del archivo Parquet
+    df = pd.read_parquet(r"data/data.parquet")
+    pred_7d = pd.read_parquet(r"data/pred_7d.parquet")
+    pred_30d = pd.read_parquet(r"data/pred_30d.parquet")
+
+    # Asegurar que los datos están ordenados por fecha
+    df = df.sort_values('timestamp')
+    pred_7d = pred_7d.sort_values('timestamp')
+    pred_30d = pred_30d.sort_values('timestamp')
+
+    # Validar que los últimos timestamps coinciden
+    assert df.timestamp.iloc[-1] == pred_7d.timestamp.iloc[-1]
+    assert df.timestamp.iloc[-1] == pred_30d.timestamp.iloc[-1]
+
+    # 7 DÍAS
+    # Preparar los datos para la predicción
+    X_last = pred_7d.drop(columns=['timestamp', 'pct_cambio_7d']).iloc[-1].to_numpy().reshape(1, -1)
+
+    # Predecir el porcentaje de cambio
+    change_7d = app.model7.predict(X_last)[0]
+
+    # Calcular el último precio medio
+    precio_medio_7d = df['close_binance'].rolling(window=7).mean().iloc[-1]
+
+    # Calcular el precio futuro
+    price_7d = precio_medio_7d * (1 + change_7d / 100)
+
+    # 30 DÍAS
+    # Preparar los datos para la predicción
+    X_last = pred_30d.drop(columns=['timestamp', 'pct_cambio_30d']).iloc[-1].to_numpy().reshape(1, -1)
+
+    # Predecir el porcentaje de cambio
+    # change_30d = app.model30.predict(X_last)[0]
+    change_30d = 1
+
+    # Calcular el último precio medio
+    precio_medio_30d = df['close_binance'].rolling(window=30).mean().iloc[-1]
+
+    # Calcular el precio futuro
+    price_30d = precio_medio_30d * (1 + change_30d / 100)
+
+    return BitcoinPrediction(
+        current_price=df.close_binance.iloc[-1],
+        price_7d=price_7d,
+        price_30d=price_30d,
+        change_7d=change_7d,
+        change_30d=change_30d
+    )
 
 
 # Endpoint para obtener la gráfica filtrada por fechas

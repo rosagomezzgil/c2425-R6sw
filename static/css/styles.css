@@ -6,6 +6,9 @@
     --card-bg: #1a1d25;
     --text-color: #ffffff;
     --secondary-text: #a0a0a0;
+    --error-color: #ff5252;
+    --border-color: rgba(255, 255, 255, 0.05);
+    --bitcoin-color: #f7931a;
 }
 
 * {
@@ -19,6 +22,9 @@ body {
     background-color: var(--dark-bg);
     color: var(--text-color);
     line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .navbar {
@@ -27,11 +33,12 @@ body {
     align-items: center;
     padding: 1rem 2rem;
     background-color: rgba(0, 0, 0, 0.2);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--border-color);
     position: sticky;
     top: 0;
     z-index: 100;
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px); /* Para Safari */
 }
 
 .logo {
@@ -67,6 +74,7 @@ body {
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
+    flex: 1;
 }
 
 .hero {
@@ -129,6 +137,8 @@ body {
     margin: 20px 0;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     border: 1px solid var(--border-color);
+    width: 100%;
+    max-width: 600px;
 }
 
 .investment-form h3 {
@@ -170,7 +180,7 @@ body {
 }
 
 .investment-btn {
-    background-color: var(--bitcoin-color, #f7931a);
+    background-color: var(--bitcoin-color);
     color: white;
     border: none;
     padding: 12px 20px;
@@ -189,10 +199,12 @@ body {
 .investment-btn:hover {
     background-color: #e37b00;
     transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(247, 147, 26, 0.3);
 }
 
 .investment-btn:active {
     transform: translateY(0);
+    box-shadow: none;
 }
 
 .profit-info {
@@ -216,7 +228,7 @@ body {
 
 .profit-negative {
     background-color: rgba(255, 82, 82, 0.1);
-    color: var(--error-color, #ff5252);
+    color: var(--error-color);
 }
 
 .card {
@@ -225,12 +237,12 @@ body {
     overflow: hidden;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     margin: 2rem 0;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
 }
 
 .card-header {
     padding: 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -259,7 +271,7 @@ body {
 
 .date-input {
     background-color: var(--card-bg);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     padding: 0.8rem 1rem;
     color: var(--text-color);
@@ -290,10 +302,18 @@ body {
     box-shadow: 0 0 15px rgba(123, 93, 250, 0.5);
 }
 
+.date-button:active {
+    transform: translateY(0);
+    box-shadow: 0 0 5px rgba(123, 93, 250, 0.3);
+}
+
 .graph-container {
     width: 100%;
     height: 600px;
     position: relative;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .graph-iframe {
@@ -316,7 +336,7 @@ body {
     padding: 1.5rem;
     flex: 1;
     min-width: 200px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
 }
@@ -350,12 +370,27 @@ body {
 }
 
 .negative {
-    color: #ff5252;
+    color: var(--error-color);
+}
+
+.error-message {
+    background-color: rgba(255, 82, 82, 0.1);
+    border: 1px solid var(--error-color);
+    color: var(--error-color);
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+    text-align: center;
+}
+
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
 }
 
 .footer {
     background-color: rgba(0, 0, 0, 0.2);
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    border-top: 1px solid var(--border-color);
     padding: 2rem;
     text-align: center;
     margin-top: 3rem;
@@ -380,6 +415,10 @@ body {
         flex-direction: column;
     }
 
+    .data-card {
+        min-width: 100%;
+    }
+
     .input-group {
         flex-direction: column;
         align-items: flex-start;
@@ -397,5 +436,14 @@ body {
     .investment-btn {
         width: 100%;
         max-width: none;
+    }
+
+    .graph-container {
+        height: 400px;
+    }
+
+    .date-selector {
+        flex-direction: column;
+        align-items: stretch;
     }
 }
