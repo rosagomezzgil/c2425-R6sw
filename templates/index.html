@@ -18,6 +18,8 @@
             <div class="nav-links">
                 <a href="https://www.binance.com/es" target="_blank" class="nav-link">Mercado</a>
                 <a href="#graph" class="nav-link">Gráfica</a>
+                <a href="#" class="nav-link">Predicciones</a>
+                <a href="#" class="nav-link">Contacto</a>
             </div>
         </nav>
     </header>
@@ -28,48 +30,61 @@
             <p class="hero-subtitle">Monitorea, analiza y toma decisiones informadas con nuestra avanzada plataforma de análisis de Bitcoin</p>
         </section>
 
-        <!-- Formulario de inversión -->
-        <div class="prediction-form">
-            <h3>Predicción por Fecha</h3>
-            <div class="input-group">
-                <label for="prediction-date">Fecha a predecir:</label>
-                <input type="date" id="prediction-date" aria-label="Fecha para la predicción">
-            </div>
-            <button id="predict-btn" class="prediction-btn">Obtener Predicción</button>
-        </div>
-
+        <!-- Tarjetas de datos -->
         <div class="data-row">
             <div class="data-card">
                 <div class="data-label">Precio Actual</div>
-                <div class="data-value" id="current-price"></div>
-                <div class="data-change" id="current-change">
-                    <span id="current-percent"></span>
-                    <span id="current-arrow"></span>
+                <div class="data-value" id="current-price">Loading...</div>
+                <div class="data-change">
+                    <span id="current-percent">0.00%</span>
+                    <span id="current-arrow"><i class="fas fa-arrow-up positive-change"></i></span>
                 </div>
                 <div class="profit-amount" id="current-profit"></div>
             </div>
 
             <div class="data-card">
                 <div class="data-label">7 días</div>
-                <div class="data-value" id="price-7d"></div>
-                <div class="data-change" id="change-7d">
-                    <span id="percent-7d"></span>
-                    <span id="arrow-7d"></span>
+                <div class="data-value" id="price-7d">Loading...</div>
+                <div class="data-change">
+                    <span id="percent-7d">0.00%</span>
+                    <span id="arrow-7d"><i class="fas fa-arrow-up positive-change"></i></span>
                 </div>
                 <div class="profit-amount" id="profit-7d"></div>
             </div>
 
             <div class="data-card">
                 <div class="data-label">30 días</div>
-                <div class="data-value" id="price-30d"></div>
-                <div class="data-change" id="change-30d">
-                    <span id="percent-30d"></span>
-                    <span id="arrow-30d"></span>
+                <div class="data-value" id="price-30d">Loading...</div>
+                <div class="data-change">
+                    <span id="percent-30d">0.00%</span>
+                    <span id="arrow-30d"><i class="fas fa-arrow-up positive-change"></i></span>
                 </div>
                 <div class="profit-amount" id="profit-30d"></div>
             </div>
         </div>
 
+        <!-- Formulario de predicción -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">Predicción por Fecha</div>
+            </div>
+
+            <div class="prediction-form">
+                <h3>Predicción de precio futuro</h3>
+                <div class="input-group">
+                    <label for="prediction-date">Fecha a predecir:</label>
+                    <input type="date" id="prediction-date" value="2025-05-01" aria-label="Fecha para la predicción">
+                </div>
+                <button id="predict-btn" class="prediction-btn">Obtener Predicción</button>
+                <div id="prediction-result"></div>
+                <div class="profit-info">
+                    <p>Ganancia potencial:</p>
+                    <div class="profit-amount" id="prediction-profit">Haga una predicción primero</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfico -->
         <div class="card">
             <div class="card-header">
                 <div class="card-title">Gráfico de Bitcoin</div>
@@ -89,9 +104,7 @@
     </main>
 
     <footer class="footer">
-        <div class="container">
-            <p class="footer-text">© 2025 CryptoVision Insights. Todos los derechos reservados.</p>
-        </div>
+        <p class="footer-text">© 2025 CryptoVision Insights. Todos los derechos reservados.</p>
     </footer>
 
     <!-- Scripts -->

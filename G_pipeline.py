@@ -13,4 +13,4 @@ def pipeline(parquet_path="data/data.parquet"):
         crear_conjunto_7d(df)
         crear_conjunto_30d(df)
 
-    print("Finalizado!")
+    print("Pipeline finished!")

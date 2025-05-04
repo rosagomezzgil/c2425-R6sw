@@ -25,6 +25,7 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    width: 100%;
 }
 
 .navbar {
@@ -39,6 +40,7 @@ body {
     z-index: 100;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px); /* Para Safari */
+    width: 100%;
 }
 
 .logo {
@@ -72,7 +74,8 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    width: 100%;
+    max-width: 1400px; /* Aumentado para tomar más espacio */
     margin: 0 auto;
     padding: 2rem;
     flex: 1;
@@ -86,6 +89,7 @@ body {
     padding: 3rem 0;
     position: relative;
     overflow: hidden;
+    width: 100%;
 }
 
 .hero::before {
@@ -112,11 +116,10 @@ body {
 .hero-subtitle {
     font-size: 1.2rem;
     color: var(--secondary-text);
-    max-width: 600px;
+    max-width: 800px; /* Aumentado para mejor legibilidad */
     margin-bottom: 2rem;
 }
 
-/* Cambiar investment-form a prediction-form para mantener consistencia con el HTML corregido */
 .prediction-form {
     background-color: var(--card-bg);
     border-radius: 8px;
@@ -125,7 +128,7 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     border: 1px solid var(--border-color);
     width: 100%;
-    max-width: 600px;
+    max-width: 800px; /* Aumentado para tomar más espacio */
 }
 
 .prediction-form h3 {
@@ -166,7 +169,6 @@ body {
     box-shadow: 0 0 0 2px rgba(0, 180, 255, 0.2);
 }
 
-/* Cambiar investment-btn a prediction-btn para mantener consistencia con el HTML corregido */
 .prediction-btn {
     background-color: var(--bitcoin-color);
     color: white;
@@ -195,7 +197,6 @@ body {
     box-shadow: none;
 }
 
-/* Agregar clase para el resultado de predicción */
 #prediction-result {
     margin-top: 15px;
     background-color: rgba(0, 180, 255, 0.05);
@@ -217,7 +218,6 @@ body {
     text-align: center;
 }
 
-/* Clases para cambios positivos y negativos */
 .positive-change {
     color: var(--neon-green);
 }
@@ -233,6 +233,7 @@ body {
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     margin: 2rem 0;
     border: 1px solid var(--border-color);
+    width: 100%;
 }
 
 .card-header {
@@ -274,6 +275,8 @@ body {
     font-size: 1rem;
     outline: none;
     transition: all 0.3s ease;
+    flex: 1;
+    min-width: 200px;
 }
 
 .date-input:focus {
@@ -291,6 +294,7 @@ body {
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.3s ease;
+    min-width: 180px;
 }
 
 .date-button:hover {
@@ -324,6 +328,7 @@ body {
     gap: 1.5rem;
     margin: 2rem 0;
     justify-content: center;
+    width: 100%;
 }
 
 .data-card {
@@ -331,7 +336,7 @@ body {
     border-radius: 10px;
     padding: 1.5rem;
     flex: 1;
-    min-width: 200px;
+    min-width: 250px; /* Aumentado para mejor visualización */
     border: 1px solid var(--border-color);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
@@ -368,7 +373,7 @@ body {
     display: inline-block;
 }
 
-/* Compatibilidad con los estilos para el loader */
+/* Estilos para el loader */
 .loading {
     display: inline-block;
     width: 20px;
@@ -400,6 +405,7 @@ body {
     padding: 2rem;
     text-align: center;
     margin-top: 3rem;
+    width: 100%;
 }
 
 .footer-text {
