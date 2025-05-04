@@ -11,6 +11,7 @@ from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from joblib import load
+import numpy as np
 import os
 import traceback
 from pathlib import Path
@@ -35,6 +36,93 @@ PRED_7D_PATH = Path("data/pred_7d.parquet")
 PRED_30D_PATH = Path("data/pred_30d.parquet")
 CHART_PATH = Path("static/grafica_bitcoin.html")
 
+# Model for SVR input
+class SVRinput(BaseModel):
+    timestamp: str
+    SMA_200_dxy: float
+    volatilidad_200_sp500: float
+    EMA_50_hashrate: float
+    SMA_200_nasdaq: float
+    SMA_200_hashrate: float
+    bitcoin_gtrends: float
+    EMA_50_mDbinance: float
+    SMA_200_sp500: float
+    EMA_50_binance: float
+    EMA_50_sp500: float
+    close_nasdaq: float
+    volatilidad_200_binance: float
+    volatilidad_200_mDbinance: float
+    volatilidad_50_binance: float
+    volatilidad_50_mDbinance: float
+
+# Model for XGBoost input
+class XGBinput(BaseModel):
+    timestamp: str
+    close_binance: float
+    trades_binance: float
+    var_diaria_binance: float
+    rango_dia_binance: float
+    volatilidad_50_binance: float
+    momentum_50_binance: float
+    volatilidad_200_binance: float
+    momentum_200_binance: float
+    EMA_50_binance: float
+    SMA_200_binance: float
+    RSI_binance: float
+    fear_greed_index_fg: float
+    bitcoin_gtrends: float
+    hashrate_hashrate: float
+    SMA_200_hashrate: float
+    EMA_50_hashrate: float
+    close_mDbinance: float
+    volumen_mDbinance: float
+    trades_mDbinance: float
+    var_diaria_mDbinance: float
+    rango_dia_mDbinance: float
+    volatilidad_50_mDbinance: float
+    momentum_50_mDbinance: float
+    volatilidad_200_mDbinance: float
+    momentum_200_mDbinance: float
+    EMA_50_mDbinance: float
+    SMA_200_mDbinance: float
+    RSI_mDbinance: float
+    close_sp500: float
+    volume_sp500: float
+    var_diaria_sp500: float
+    rango_dia_sp500: float
+    volatilidad_50_sp500: float
+    momentum_50_sp500: float
+    volatilidad_200_sp500: float
+    momentum_200_sp500: float
+    EMA_50_sp500: float
+    SMA_200_sp500: float
+    RSI_sp500: float
+    close_nasdaq: float
+    volume_nasdaq: float
+    var_diaria_nasdaq: float
+    rango_dia_nasdaq: float
+    volatilidad_50_nasdaq: float
+    momentum_50_nasdaq: float
+    volatilidad_200_nasdaq: float
+    momentum_200_nasdaq: float
+    EMA_50_nasdaq: float
+    SMA_200_nasdaq: float
+    RSI_nasdaq: float
+    close_dxy: float
+    var_diaria_dxy: float
+    rango_dia_dxy: float
+    volatilidad_50_dxy: float
+    momentum_50_dxy: float
+    volatilidad_200_dxy: float
+    momentum_200_dxy: float
+    EMA_50_dxy: float
+    SMA_200_dxy: float
+    RSI_dxy: float
+
+# Model for prediction model
+class ModelPrediction(BaseModel):
+    pct_change: float
+
 # Model for prediction response
 class BitcoinPrediction(BaseModel):
     current_price: float
@@ -42,6 +130,118 @@ class BitcoinPrediction(BaseModel):
     price_30d: float
     change_7d: float
     change_30d: float
+
+# SVR predictions
+def SVRprediction(input: SVRinput):
+    try:
+        # Extraer todos los campos excepto timestamp en el orden correcto
+        features = [
+            input.SMA_200_dxy,
+            input.volatilidad_200_sp500,
+            input.EMA_50_hashrate,
+            input.SMA_200_nasdaq,
+            input.SMA_200_hashrate,
+            input.bitcoin_gtrends,
+            input.EMA_50_mDbinance,
+            input.SMA_200_sp500,
+            input.EMA_50_binance,
+            input.EMA_50_sp500,
+            input.close_nasdaq,
+            input.volatilidad_200_binance,
+            input.volatilidad_200_mDbinance,
+            input.volatilidad_50_binance,
+            input.volatilidad_50_mDbinance
+        ]
+
+        # Convertir a numpy array y reshape para el modelo
+        X = np.array(features).reshape(1, -1)
+
+        # Hacer la predicción
+        prediction = app.model7.predict(X)[0]
+
+        return prediction
+    except Exception as e:
+        print(f"Error en la predicción SVR: {e}")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="Error en la predicción")
+
+def XGBprediction(input: XGBinput):
+    try:
+        # Extraer todos los campos excepto timestamp en el orden correcto
+        features = [
+            input.close_binance,
+            input.trades_binance,
+            input.var_diaria_binance,
+            input.rango_dia_binance,
+            input.volatilidad_50_binance,
+            input.momentum_50_binance,
+            input.volatilidad_200_binance,
+            input.momentum_200_binance,
+            input.EMA_50_binance,
+            input.SMA_200_binance,
+            input.RSI_binance,
+            input.fear_greed_index_fg,
+            input.bitcoin_gtrends,
+            input.hashrate_hashrate,
+            input.SMA_200_hashrate,
+            input.EMA_50_hashrate,
+            input.close_mDbinance,
+            input.volumen_mDbinance,
+            input.trades_mDbinance,
+            input.var_diaria_mDbinance,
+            input.rango_dia_mDbinance,
+            input.volatilidad_50_mDbinance,
+            input.momentum_50_mDbinance,
+            input.volatilidad_200_mDbinance,
+            input.momentum_200_mDbinance,
+            input.EMA_50_mDbinance,
+            input.SMA_200_mDbinance,
+            input.RSI_mDbinance,
+            input.close_sp500,
+            input.volume_sp500,
+            input.var_diaria_sp500,
+            input.rango_dia_sp500,
+            input.volatilidad_50_sp500,
+            input.momentum_50_sp500,
+            input.volatilidad_200_sp500,
+            input.momentum_200_sp500,
+            input.EMA_50_sp500,
+            input.SMA_200_sp500,
+            input.RSI_sp500,
+            input.close_nasdaq,
+            input.volume_nasdaq,
+            input.var_diaria_nasdaq,
+            input.rango_dia_nasdaq,
+            input.volatilidad_50_nasdaq,
+            input.momentum_50_nasdaq,
+            input.volatilidad_200_nasdaq,
+            input.momentum_200_nasdaq,
+            input.EMA_50_nasdaq,
+            input.SMA_200_nasdaq,
+            input.RSI_nasdaq,
+            input.close_dxy,
+            input.var_diaria_dxy,
+            input.rango_dia_dxy,
+            input.volatilidad_50_dxy,
+            input.momentum_50_dxy,
+            input.volatilidad_200_dxy,
+            input.momentum_200_dxy,
+            input.EMA_50_dxy,
+            input.SMA_200_dxy,
+            input.RSI_dxy
+        ]
+
+        # Convertir a numpy array y reshape para el modelo
+        X = np.array(features).reshape(1, -1)
+
+        # Hacer la predicción
+        prediction = app.model30.predict(X)[0]
+
+        return prediction
+    except Exception as e:
+        print(f"Error en la predicción XGB: {e}")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail="Error en la predicción")
 
 def create_chart(request: Request = None):
 
@@ -449,6 +649,17 @@ async def get_current_bitcoin():
         traceback.print_exc()
         raise HTTPException(status_code=500, detail="Error retrieving Bitcoin data")
 
+@app.post("/api/bitcoin/predict/svr", response_model=ModelPrediction)
+async def SVRpredict(input: SVRinput):
+    pct_change_7d = SVRprediction(input)
+
+    return ModelPrediction(pct_change=pct_change_7d)
+
+@app.post("/api/bitcoin/predict/xgb", response_model=ModelPrediction)
+async def XGBpredict(input: XGBinput):
+    pct_change_30d = XGBprediction(input)
+
+    return ModelPrediction(pct_change=pct_change_30d)
 
 @app.get("/static/grafica_bitcoin.html")
 async def get_filtered_chart(request: Request):
