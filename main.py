@@ -588,6 +588,10 @@ async def startup_event():
         app.model7 = load('models/SVR.joblib')
         app.model30 = load('models/XGB.joblib')
 
+        # Load scalers fot models
+        app.scaler7 = load('models/SVR_scaler.joblib')
+        app.scaler30 = load('models/XGB_scaler.joblib')
+
         print("Startup completed successfully")
     except Exception as e:
         print(f"Error during startup: {e}")
@@ -617,15 +621,15 @@ async def get_bitcoin_prediction(prediction_date: str = Query(None)):
 
             # 7-DAY PREDICTION with current data
             X_last_7d = pred_7d.drop(columns=['timestamp', 'pct_cambio_7d']).iloc[-1].to_numpy().reshape(1, -1)
+            X_last_7d = app.scaler7.transform(X_last_7d)
             change_7d = app.model7.predict(X_last_7d)[0]
-            precio_medio_7d = df['close_binance'].rolling(window=7).mean().iloc[-1]
-            price_7d = precio_medio_7d * (1 + change_7d / 100)
+            price_7d = current_price * (1 + change_7d / 100)
 
             # 30-DAY PREDICTION with current data
             X_last_30d = pred_30d.drop(columns=['timestamp', 'pct_cambio_30d']).iloc[-1].to_numpy().reshape(1, -1)
+            X_last_30d = app.scaler30.transform(X_last_30d)
             change_30d = app.model30.predict(X_last_30d)[0]
-            precio_medio_30d = df['close_binance'].rolling(window=30).mean().iloc[-1]
-            price_30d = precio_medio_30d * (1 + change_30d / 100)
+            price_30d = current_price * (1 + change_30d / 100)
 
         else:
             # Convert string date to datetime
@@ -656,15 +660,15 @@ async def get_bitcoin_prediction(prediction_date: str = Query(None)):
                 if days_diff <= 7:
                     # Use 7-day model
                     X_last = pred_7d.drop(columns=['timestamp', 'pct_cambio_7d']).iloc[-1].to_numpy().reshape(1, -1)
+                    X_last = app.scaler7.transform(X_last)
                     change = app.model7.predict(X_last)[0]
-                    precio_medio = df['close_binance'].rolling(window=7).mean().iloc[-1]
 
                     # Scale the prediction based on days
                     scaling_factor = days_diff / 7
                     adjusted_change = change * scaling_factor
 
                     # Calculate predictions
-                    price_prediction = precio_medio * (1 + adjusted_change / 100)
+                    price_prediction = current_price * (1 + adjusted_change / 100)
                     price_7d = price_prediction
                     price_30d = price_prediction  # Same as 7d for now
                     change_7d = adjusted_change
@@ -673,15 +677,15 @@ async def get_bitcoin_prediction(prediction_date: str = Query(None)):
                 elif days_diff <= 30:
                     # Use 30-day model
                     X_last = pred_30d.drop(columns=['timestamp', 'pct_cambio_30d']).iloc[-1].to_numpy().reshape(1, -1)
+                    X_last = app.scaler30.transform(X_last)
                     change = app.model30.predict(X_last)[0]
-                    precio_medio = df['close_binance'].rolling(window=30).mean().iloc[-1]
 
                     # Scale the prediction based on days
                     scaling_factor = days_diff / 30
                     adjusted_change = change * scaling_factor
 
                     # Calculate predictions
-                    price_prediction = precio_medio * (1 + adjusted_change / 100)
+                    price_prediction = current_price * (1 + adjusted_change / 100)
                     price_7d = price_prediction
                     price_30d = price_prediction
                     change_7d = adjusted_change
