@@ -1,5 +1,3 @@
-import pandas as pd
-
 def eliminar_variables(df):
 
     df = df.copy()
@@ -39,6 +37,8 @@ def crear_conjunto_7d(df):
     # Guardar df limpio
     df_7d.to_parquet("data/dataset_7d.parquet", index=False)
 
+    return df_7d
+
 def crear_conjunto_30d(df):
     # Crear df_30d quitando columnas de horizonte 7 días
     columnas_XGBoost = ['timestamp'] + \
@@ -77,3 +77,5 @@ def crear_conjunto_30d(df):
 
     # Guardar df limpio
     df_30d.to_parquet("data/dataset_30d.parquet", index=False)
+
+    return df_30d
