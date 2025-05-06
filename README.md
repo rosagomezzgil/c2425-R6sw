@@ -2,6 +2,7 @@
 ![LOGO](https://img.bitgetimg.com/multiLang/web/ebb606b3d63bb1f7d48e7ccdfbb984c1.png)
 
 # Estructura del repositorio.
+```bash
 ├── data/ # Conjuntos de datos en formato .parquet
 ├── modelos/ # Modelos entrenados en formato .joblib
 ├── models/ # Alternativa de carpeta para modelos
@@ -18,6 +19,7 @@
 ├── Dockerfile # Configuración de Docker
 ├── pyproject.toml # Dependencias del proyecto
 ├── README.md
+```
 # Instrucciones para iniciar el entorno de desarrollo con sus dependencias.
 ```bash
 uv sync
