@@ -6,12 +6,13 @@ import yfinance as yf
 from pytrends.request import TrendReq
 from datetime import datetime
 
+
 def get_yfinance_series(
     ticker: str,
     start_date: str,
     end_date: str,
     interval: str = "1d",
-    max_retries: int = 5
+    max_retries: int = 5,
 ) -> Optional[pd.DataFrame]:
     """
     Extrae datos de Yahoo Finance de un activo financiero.
@@ -44,16 +45,18 @@ def get_yfinance_series(
         except Exception as e:
             retries += 1
             wait_time = 10 * retries
-            print(f"Error descargando {ticker}: {e}. Reintentando en {wait_time} segundos...")
+            print(
+                f"Error descargando {ticker}: {e}. Reintentando en {wait_time} segundos..."
+            )
             time.sleep(wait_time)
 
-    raise RuntimeError(f"No se pudo descargar {ticker} después de {max_retries} intentos.")
+    raise RuntimeError(
+        f"No se pudo descargar {ticker} después de {max_retries} intentos."
+    )
 
 
 def get_binance_futures_series(
-    symbol: str = "BTCUSDT",
-    days: int = 365,
-    interval: str = "1h"
+    symbol: str = "BTCUSDT", days: int = 365, interval: str = "1h"
 ) -> pd.DataFrame:
     """
     Extrae datos históricos de Binance Futures (mercado de derivados).
@@ -138,8 +141,7 @@ def get_binance_futures_series(
 
 
 def get_bitcoin_hashrate_series(
-    timespan: str = "all",
-    rolling_average: str = "24hours"
+    timespan: str = "all", rolling_average: str = "24hours"
 ) -> pd.DataFrame:
     """
     Extrae el hashrate de Bitcoin desde Blockchain.com.
@@ -174,10 +176,9 @@ def get_bitcoin_hashrate_series(
     except requests.exceptions.RequestException as e:
         raise RuntimeError(f"Error al obtener datos del hashrate: {e}")
 
+
 def get_google_trends_series(
-    keywords: List[str] = ["bitcoin"],
-    timeframe: str = "today 5-y",
-    geo: str = ""
+    keywords: List[str] = ["bitcoin"], timeframe: str = "today 5-y", geo: str = ""
 ) -> pd.DataFrame:
     """
     Extrae datos de Google Trends para las palabras clave especificadas.
@@ -212,12 +213,13 @@ def get_google_trends_series(
     except (requests.exceptions.RequestException, ValueError) as e:
         raise e
 
+
 def get_binance_ohlcv_series(
     symbol: str = "BTCUSDT",
     interval: str = "1d",
     limit: int = 1000,
     start_time: Optional[int] = None,
-    end_time: Optional[int] = None
+    end_time: Optional[int] = None,
 ) -> pd.DataFrame:
     """
     Extrae datos OHLCV históricos desde Binance.
@@ -251,9 +253,18 @@ def get_binance_ohlcv_series(
     df = pd.DataFrame(
         data,
         columns=[
-            "timestamp", "open", "high", "low", "close", "volume",
-            "close_time", "quote_asset_volume", "trades",
-            "taker_buy_base", "taker_buy_quote", "ignore"
+            "timestamp",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "close_time",
+            "quote_asset_volume",
+            "trades",
+            "taker_buy_base",
+            "taker_buy_quote",
+            "ignore",
         ],
     )
 
@@ -269,6 +280,7 @@ def get_binance_ohlcv_series(
     df.sort_index(inplace=True)
 
     return df
+
 
 def get_fear_greed_series(limit: int = 0, date_format: str = "world") -> pd.DataFrame:
     """
@@ -339,7 +351,9 @@ def actualizar_parquet_general(parquet_path: str):
     end_date = hoy.strftime("%Y-%m-%d")
     dias_a_actualizar = (hoy - ultima_fecha).days
 
-    print(f"Actualizando desde {start_date} hasta {end_date} ({dias_a_actualizar} días)...")
+    print(
+        f"Actualizando desde {start_date} hasta {end_date} ({dias_a_actualizar} días)..."
+    )
 
     # 3. Llamar a cada función de extracción
     columnas_nuevas = {}
@@ -347,7 +361,7 @@ def actualizar_parquet_general(parquet_path: str):
     try:
         # Fear and Greed
         df_fear = get_fear_greed_series(limit=dias_a_actualizar)
-        columnas_nuevas['fear_greed_index_fg'] = df_fear['fear_greed_index']
+        columnas_nuevas["fear_greed_index_fg"] = df_fear["fear_greed_index"]
     except Exception as e:
         print(f"Error actualizando Fear & Greed: {e}")
 
@@ -356,65 +370,79 @@ def actualizar_parquet_general(parquet_path: str):
         timeframe = ajustar_timeframe_google_trends(dias_a_actualizar)
         df_trends = get_google_trends_series(keywords=["bitcoin"], timeframe=timeframe)
         df_trends = df_trends[df_trends.index > ultima_fecha]
-        columnas_nuevas['bitcoin_gtrends'] = df_trends['bitcoin']
+        columnas_nuevas["bitcoin_gtrends"] = df_trends["bitcoin"]
     except Exception as e:
         print(f"Error actualizando Google Trends: {e}")
 
     try:
         # Binance Spot OHLCV
-        df_binance_spot = get_binance_ohlcv_series(symbol="BTCUSDT", interval="1d", limit=dias_a_actualizar)
+        df_binance_spot = get_binance_ohlcv_series(
+            symbol="BTCUSDT", interval="1d", limit=dias_a_actualizar
+        )
         # Guardar cada columna que nos interesa
-        for col in ['open', 'high', 'low', 'close', 'volumen', 'trades']:
-            columnas_nuevas[f'{col}_binance'] = df_binance_spot[col]
+        for col in ["open", "high", "low", "close", "volumen", "trades"]:
+            columnas_nuevas[f"{col}_binance"] = df_binance_spot[col]
     except Exception as e:
         print(f"Error actualizando Binance Spot: {e}")
 
     try:
         # Binance Futures (solo close también)
-        df_binance_futures = get_binance_futures_series(symbol="BTCUSDT", days=dias_a_actualizar, interval="1d")
+        df_binance_futures = get_binance_futures_series(
+            symbol="BTCUSDT", days=dias_a_actualizar, interval="1d"
+        )
         # Guardar cada columna que nos interesa
-        for col in ['open', 'high', 'low', 'close', 'volumen', 'trades']:
-            columnas_nuevas[f'{col}_mDbinance'] = df_binance_futures[col]
+        for col in ["open", "high", "low", "close", "volumen", "trades"]:
+            columnas_nuevas[f"{col}_mDbinance"] = df_binance_futures[col]
     except Exception as e:
         print(f"Error actualizando Binance Futures: {e}")
 
     try:
         # Yahoo Finance - SP500
-        df_sp500 = get_yfinance_series(ticker="^GSPC", start_date=start_date, end_date=end_date, interval="1d")
+        df_sp500 = get_yfinance_series(
+            ticker="^GSPC", start_date=start_date, end_date=end_date, interval="1d"
+        )
         # Guardar cada columna que nos interesa
-        for col in ['Open', 'High', 'Low', 'Close', 'Volume']:
-            columnas_nuevas[f'{col.lower()}_sp500'] = df_sp500[col].squeeze()
+        for col in ["Open", "High", "Low", "Close", "Volume"]:
+            columnas_nuevas[f"{col.lower()}_sp500"] = df_sp500[col].squeeze()
     except Exception as e:
         print(f"Error actualizando SP500: {e}")
 
     try:
         # Yahoo Finance - Nasdaq
-        df_nasdaq  = get_yfinance_series(ticker="^IXIC", start_date=start_date, end_date=end_date, interval="1d")
+        df_nasdaq = get_yfinance_series(
+            ticker="^IXIC", start_date=start_date, end_date=end_date, interval="1d"
+        )
         # Guardar cada columna que nos interesa
-        for col in ['Open', 'High', 'Low', 'Close', 'Volume']:
-            columnas_nuevas[f'{col.lower()}_nasdaq'] = df_nasdaq[col].squeeze()
+        for col in ["Open", "High", "Low", "Close", "Volume"]:
+            columnas_nuevas[f"{col.lower()}_nasdaq"] = df_nasdaq[col].squeeze()
     except Exception as e:
         print(f"Error actualizando Nasdaq: {e}")
 
     try:
         # Yahoo Finance - dxy
-        df_dxy   = get_yfinance_series(ticker="DX-Y.NYB", start_date=start_date, end_date=end_date, interval="1d")
+        df_dxy = get_yfinance_series(
+            ticker="DX-Y.NYB", start_date=start_date, end_date=end_date, interval="1d"
+        )
         # Guardar cada columna que nos interesa
-        for col in ['Open', 'High', 'Low', 'Close']:
-            columnas_nuevas[f'{col.lower()}_dxy'] = df_dxy[col].squeeze()
+        for col in ["Open", "High", "Low", "Close"]:
+            columnas_nuevas[f"{col.lower()}_dxy"] = df_dxy[col].squeeze()
     except Exception as e:
         print(f"Error actualizando Nasdaq: {e}")
 
     try:
         # Blockchain.com - Hashrate
-        dias_peticion = max(dias_a_actualizar, 2)  # Pedimos mínimo 2 días para evitar error API
-        df_hashrate = get_bitcoin_hashrate_series(timespan=f"{dias_peticion}days",rolling_average="24hours")
+        dias_peticion = max(
+            dias_a_actualizar, 2
+        )  # Pedimos mínimo 2 días para evitar error API
+        df_hashrate = get_bitcoin_hashrate_series(
+            timespan=f"{dias_peticion}days", rolling_average="24hours"
+        )
 
         # Si originalmente solo queríamos 1 día, recortamos después
         df_hashrate = df_hashrate[df_hashrate.index > ultima_fecha]
 
         # Guardamos en las columnas nuevas
-        columnas_nuevas['hashrate_hashrate'] = df_hashrate['hashrate']
+        columnas_nuevas["hashrate_hashrate"] = df_hashrate["hashrate"]
     except Exception as e:
         print(f"Error actualizando Hashrate: {e}")
 
@@ -434,12 +462,13 @@ def actualizar_parquet_general(parquet_path: str):
     df_actualizado.sort_index(inplace=True)
 
     # 6. Guardar el parquet actualizado
-    #df_actualizado.to_parquet(parquet_path)
+    # df_actualizado.to_parquet(parquet_path)
     print(f"Parquet actualizado. Nuevas filas añadidas: {len(df_nuevos)}")
 
     return df_actualizado, True
 
-#Funcion auxiliar
+
+# Funcion auxiliar
 def ajustar_timeframe_google_trends(dias_actualizar: int) -> str:
     """
     Ajusta automáticamente el timeframe para Google Trends,

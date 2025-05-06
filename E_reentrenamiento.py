@@ -13,8 +13,8 @@ def reentrenar_modelo(tecnica, df):
 
     if tecnica == "svr":
 
-        df['timestamp'] = pd.to_datetime(df['timestamp'])
-        df.set_index('timestamp', inplace=True)
+        df["timestamp"] = pd.to_datetime(df["timestamp"])
+        df.set_index("timestamp", inplace=True)
         y = df["pct_cambio_7d"]
         X = df.drop(columns=["pct_cambio_7d"])
 
@@ -26,7 +26,7 @@ def reentrenar_modelo(tecnica, df):
         X_scaled = scaler.fit_transform(X_imp)
 
         # Entrenamiento
-        best_params_svr = {'kernel': 'linear', 'epsilon': 0.5, 'C': 0.1}
+        best_params_svr = {"kernel": "linear", "epsilon": 0.5, "C": 0.1}
         modelo = SVR(**best_params_svr)
         modelo.fit(X_scaled, y)
 
@@ -37,30 +37,29 @@ def reentrenar_modelo(tecnica, df):
 
     elif tecnica == "xgboost":
         # Preprocesado
-        df['timestamp'] = pd.to_datetime(df['timestamp'])
-        df.set_index('timestamp', inplace=True)
+        df["timestamp"] = pd.to_datetime(df["timestamp"])
+        df.set_index("timestamp", inplace=True)
         df = df.groupby(df.index).first()
-        df = df.asfreq('D')  # frecuencia diaria
+        df = df.asfreq("D")  # frecuencia diaria
 
         # Test de estacionariedad
         if adfuller(df["pct_cambio_30d"])[1] > 0.05:
             df["pct_cambio_30d"] = df["pct_cambio_30d"].diff()
             df = df.dropna()
 
-        #Separar la variable respuesta de las predictoras
+        # Separar la variable respuesta de las predictoras
         y = df["pct_cambio_30d"]
         X = df.drop(columns=["pct_cambio_30d"])
 
-
         # Entrenamiento
         best_params_xgb = {
-            'colsample_bytree': 0.8,
-            'learning_rate': 0.05,
-            'max_depth': 2,
-            'n_estimators': 100,
-            'reg_alpha': 1,
-            'reg_lambda': 5,
-            'subsample': 0.8
+            "colsample_bytree": 0.8,
+            "learning_rate": 0.05,
+            "max_depth": 2,
+            "n_estimators": 100,
+            "reg_alpha": 1,
+            "reg_lambda": 5,
+            "subsample": 0.8,
         }
 
         modelo = XGBRegressor(**best_params_xgb)
@@ -72,4 +71,3 @@ def reentrenar_modelo(tecnica, df):
 
     else:
         raise ValueError("Técnica no reconocida: usa 'svr' o 'xgboost'")
-
