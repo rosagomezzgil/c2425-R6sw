@@ -53,12 +53,37 @@
 ├── pyproject.toml # Dependencias del proyecto
 └── README.md # (Este archivo)
 ```
+# Comportamientos conflictivos en la extracción de datos
+- Puede llegar a darse el caso de que surja un error en la extracción de datos debido a que se haya alcanzado el límite de extracción de datos de la API de Yahoo Finance.
+El código intenta extraer los datos hasta 5 veces, dejando un intervalo de tiempo entre cada intento. Una vez completados esos intentos, el resto de la ejecución debería continuar con normalidad.
+El proceso puede llegar a tardar unos 2 minutos, pero después todo debería funcionar correctamente.
+
 # Instrucciones para iniciar el entorno de desarrollo con sus dependencias.
+El proyecto requiere las siguientes librerías (ver también `pyproject.toml`):
+
+```bash
+fastapi[standard]>=0.115.12
+jinja2>=3.1.6
+joblib>=1.5.0
+pandas>=2.2.3
+plotly>=6.0.1
+pyarrow>=19.0.1
+pydantic>=2.11.3
+python-multipart>=0.0.20
+pytrends>=4.9.2
+requests>=2.32.3
+scikit-learn>=1.6.1
+statsmodels>=0.14.4
+xgboost>=3.0.0
+yfinance>=0.2.57
+```
+
+Puedes instalarlas todas haciendo el siguiente código desde la terminal:
 ```bash
 uv sync
 ```
 # Instrucciones para ejecutar ejecutar y probar el servidor web.
-1. Primero situarse en la carpeta del proyecto.
+1. Primero situarse en la carpeta del proyecto (c2425-R6sw).
 
 
 2. Ejecutar el siguiente código:
