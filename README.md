@@ -10,16 +10,11 @@
 │     ├── pred_7d.parquet
 │     └── pred_30d.parquet
 │
-├── modelos/ # Modelos entrenados en formato .joblib
-│     ├── SVR.joblib
-│     ├── SVR_scaler.joblib
-│     └── XGB.joblib
 │      
 ├── models/ # Alternativa de carpeta para modelos
 │     ├── SVR.joblib
 │     ├── SVR_scaler.joblib
 │     ├── XGB.joblib
-│     └── XGB_scaler.joblib
 │
 ├── static/ # Archivos estáticos (CSS, JS, imágenes)
 │     ├── css # Archivo para tocar el diseño de la web
