@@ -1,12 +1,13 @@
 import pandas as pd
 from typing import Optional
 
+
 def calcular_tendencia(
-        df: pd.DataFrame,
-        horizonte: int,
-        threshold: float = 0,
-        pct_promedio = False,
-        output_path: Optional[str] = None,
+    df: pd.DataFrame,
+    horizonte: int,
+    threshold: float = 0,
+    pct_promedio=False,
+    output_path: Optional[str] = None,
 ):
     """
     Calcula la tendencia futura basada en la variación porcentual del precio medio.
@@ -23,7 +24,7 @@ def calcular_tendencia(
     if pct_promedio:
         precio_medio = df["close_binance"].rolling(window=horizonte).mean()
         df_result[f"pct_cambio_{horizonte}d"] = (
-                (precio_medio.shift(-horizonte) - precio_medio) / precio_medio * 100
+            (precio_medio.shift(-horizonte) - precio_medio) / precio_medio * 100
         )
 
     else:
@@ -31,19 +32,24 @@ def calcular_tendencia(
         # Usamos el precio actual y el precio futuro después de 'horizonte' días
         future_price = df_result["close_binance"].shift(-horizonte)
         df_result[f"pct_cambio_{horizonte}d"] = (
-                (future_price - df_result["close_binance"]) / df_result["close_binance"] * 100
+            (future_price - df_result["close_binance"])
+            / df_result["close_binance"]
+            * 100
         )
 
     # Definir la tendencia futura
     df_result[f"tendencia_futura_{horizonte}d"] = 0  # Neutral por defecto
     df_result.loc[
-        df_result[f"pct_cambio_{horizonte}d"] > threshold, f"tendencia_futura_{horizonte}d"
+        df_result[f"pct_cambio_{horizonte}d"] > threshold,
+        f"tendencia_futura_{horizonte}d",
     ] = 1  # Alcista
     df_result.loc[
-        df_result[f"pct_cambio_{horizonte}d"] < -threshold, f"tendencia_futura_{horizonte}d"
+        df_result[f"pct_cambio_{horizonte}d"] < -threshold,
+        f"tendencia_futura_{horizonte}d",
     ] = -1  # Bajista
 
     return df_result
+
 
 def calcular_variables_respuesta(df, parquet_path):
     df = df.copy()

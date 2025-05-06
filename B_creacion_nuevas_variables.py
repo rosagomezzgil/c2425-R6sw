@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 
+
 def calcular_rsi(df, columna: str, window: int = 14):
     """
     Calcula el Índice de Fuerza Relativa (RSI) para una serie de precios.
@@ -69,16 +70,18 @@ def crear_variables(df: pd.DataFrame) -> pd.DataFrame:
         # Momentum
         df[f"momentum_{periodo}"] = df["close"].pct_change(periods=periodo) * 100
 
-
     # Medias móviles
-    df = crear_medias_moviles(df, columna='close', ventanas=[50,200])
+    df = crear_medias_moviles(df, columna="close", ventanas=[50, 200])
 
     # RSI
     df = calcular_rsi(df, "close")
 
     return df
 
-def crear_medias_moviles(df: pd.DataFrame, columna: str = "close", ventanas: list = [50, 200]) -> pd.DataFrame:
+
+def crear_medias_moviles(
+    df: pd.DataFrame, columna: str = "close", ventanas: list = [50, 200]
+) -> pd.DataFrame:
     """
     Crea medias móviles simples (SMA) y exponenciales (EMA) para una columna.
 
@@ -101,8 +104,9 @@ def interpolar_columnas(df: pd.DataFrame, columnas: list) -> pd.DataFrame:
     df = df.copy()
     for col in columnas:
         if col in df.columns:
-            df[col] = df[col].interpolate(method='time')
+            df[col] = df[col].interpolate(method="time")
     return df
+
 
 def aplicar_transformaciones(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -116,8 +120,13 @@ def aplicar_transformaciones(df: pd.DataFrame) -> pd.DataFrame:
 
     df = df.copy()
 
-    columnas_interpolar = [c for c in df.columns if
-                           any(prefix in c for prefix in ["gtrends", "hashrate", "sp500", "nasdaq", "dxy"])]
+    columnas_interpolar = [
+        c
+        for c in df.columns
+        if any(
+            prefix in c for prefix in ["gtrends", "hashrate", "sp500", "nasdaq", "dxy"]
+        )
+    ]
     df = interpolar_columnas(df, columnas_interpolar)
 
     df.reset_index(inplace=True)
@@ -128,7 +137,7 @@ def aplicar_transformaciones(df: pd.DataFrame) -> pd.DataFrame:
         "sp500": ["close_sp500", "high_sp500", "low_sp500"],
         "nasdaq": ["close_nasdaq", "high_nasdaq", "low_nasdaq"],
         "dxy": ["close_dxy", "high_dxy", "low_dxy"],
-        "hashrate" : ["hashrate_hashrate"]
+        "hashrate": ["hashrate_hashrate"],
     }
 
     for nombre, columnas in activos.items():
@@ -136,19 +145,30 @@ def aplicar_transformaciones(df: pd.DataFrame) -> pd.DataFrame:
             df_activo = df[["timestamp"] + columnas].copy()
 
             if nombre == "hashrate":
-                df_activo = crear_medias_moviles(df_activo,columna="hashrate_hashrate", ventanas=[50, 200])
+                df_activo = crear_medias_moviles(
+                    df_activo, columna="hashrate_hashrate", ventanas=[50, 200]
+                )
             else:
-                df_activo.rename(columns={
-                    columnas[0]: "close",
-                    columnas[1]: "high",
-                    columnas[2]: "low"
-                }, inplace=True)
+                df_activo.rename(
+                    columns={
+                        columnas[0]: "close",
+                        columnas[1]: "high",
+                        columnas[2]: "low",
+                    },
+                    inplace=True,
+                )
 
                 df_activo = crear_variables(df_activo)
 
             # Añadir columnas de salida renombradas al df original
             for col in df_activo.columns:
-                if col not in ["timestamp", "close", "high", "low", "hashrate_hashrate"]:
+                if col not in [
+                    "timestamp",
+                    "close",
+                    "high",
+                    "low",
+                    "hashrate_hashrate",
+                ]:
                     nuevo_nombre = f"{col}_{nombre}"
                     df[nuevo_nombre] = df_activo[col]
 
