@@ -621,7 +621,6 @@ async def startup_event():
 
         # Load scalers fot models
         app.scaler7 = load("models/SVR_scaler.joblib")
-        app.scaler30 = load("models/XGB_scaler.joblib")
 
         print("Startup completed successfully")
     except Exception as e:
@@ -672,7 +671,8 @@ async def get_bitcoin_prediction(prediction_date: str = Query(None)):
                 .to_numpy()
                 .reshape(1, -1)
             )
-            X_last_30d = app.scaler30.transform(X_last_30d)
+
+
             change_30d = app.model30.predict(X_last_30d)[0]
             price_30d = current_price * (1 + change_30d / 100)
 
@@ -737,7 +737,7 @@ async def get_bitcoin_prediction(prediction_date: str = Query(None)):
                         .to_numpy()
                         .reshape(1, -1)
                     )
-                    X_last = app.scaler30.transform(X_last)
+
                     change = app.model30.predict(X_last)[0]
 
                     # Scale the prediction based on days

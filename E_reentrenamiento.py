@@ -31,8 +31,8 @@ def reentrenar_modelo(tecnica, df):
         modelo.fit(X_scaled, y)
 
         # Guardar modelo y scaler
-        joblib.dump(modelo, "modelos/SVR.joblib")
-        joblib.dump(scaler, "modelos/SVR_scaler.joblib")
+        joblib.dump(modelo, "models/SVR.joblib")
+        joblib.dump(scaler, "models/SVR_scaler.joblib")
         print("SVR reentrenado y guardado.")
 
     elif tecnica == "xgboost":
@@ -66,7 +66,7 @@ def reentrenar_modelo(tecnica, df):
         modelo.fit(X, y)
 
         # Guardar modelo y scaler
-        joblib.dump(modelo, "modelos/XGB.joblib")
+        joblib.dump(modelo, "models/XGB.joblib")
         print("XGBoost reentrenado y guardado.")
 
     else:
