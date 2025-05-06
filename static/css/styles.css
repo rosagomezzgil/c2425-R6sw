@@ -1,3 +1,12 @@
+/*
+  Archivo CSS principal para el diseño de una interfaz moderna y responsiva.
+  Este estilo se enfoca en una paleta oscura con acentos neón y diseño tipo tarjeta.
+  Se utiliza para una aplicación relacionada con predicciones (posiblemente financieras)
+  con componentes como barra de navegación, formulario de predicción, tarjetas de datos,
+  selección de fechas y gráficos incrustados.
+*/
+
+/* Variables de color definidas */
 :root {
     --neon-blue: #00b4ff;
     --neon-green: #0bf67e;
@@ -13,6 +22,7 @@
     --primary-bg: #121212;
 }
 
+/* Estilos generales para todos los elementos */
 * {
     margin: 0;
     padding: 0;
@@ -20,6 +30,7 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Estilo del cuerpo principal */
 body {
     background-color: var(--dark-bg);
     color: var(--text-color);
@@ -30,6 +41,7 @@ body {
     width: 100%;
 }
 
+/* Barra de navegación principal */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -45,6 +57,7 @@ body {
     width: 100%;
 }
 
+/* Título/logo en la barra de navegación */
 .logo {
     font-size: 1.5rem;
     font-weight: bold;
@@ -53,17 +66,20 @@ body {
     align-items: center;
 }
 
+/* Icono junto al logo */
 .logo-icon {
     margin-right: 10px;
     font-size: 1.8rem;
     color: var(--bitcoin-color);
 }
 
+/* Contenedor de enlaces de navegación */
 .nav-links {
     display: flex;
     gap: 1.5rem;
 }
 
+/* Enlace individual en la navegación */
 .nav-link {
     color: var(--text-color);
     text-decoration: none;
@@ -71,10 +87,12 @@ body {
     transition: color 0.3s ease;
 }
 
+/* Enlace individual en la navegación */
 .nav-link:hover {
     color: var(--neon-blue);
 }
 
+/* Contenedor principal para contenido */
 .container {
     width: 100%;
     max-width: 1100px;
@@ -83,6 +101,7 @@ body {
     flex: 1;
 }
 
+/* Sección inicial de bienvenida/introducción */
 .hero {
     display: flex;
     flex-direction: column;
@@ -94,6 +113,7 @@ body {
     width: 100%;
 }
 
+/* Fondo decorativo para la sección hero */
 .hero::before {
     content: '';
     position: absolute;
@@ -105,6 +125,7 @@ body {
     z-index: -1;
 }
 
+/* Título principal de la página */
 .hero-title {
     font-size: 3rem;
     font-weight: 700;
@@ -115,6 +136,7 @@ body {
     color: transparent;
 }
 
+/* Subtítulo o descripción */
 .hero-subtitle {
     font-size: 1.2rem;
     color: var(--secondary-text);
@@ -122,6 +144,7 @@ body {
     margin-bottom: 2rem;
 }
 
+/* Formulario para predicción de datos */
 .prediction-form {
     background-color: var(--card-bg);
     border-radius: 8px;
@@ -133,6 +156,7 @@ body {
     max-width: 1100px;
 }
 
+/* Título del formulario */
 .prediction-form h3 {
     margin-top: 0;
     margin-bottom: 15px;
@@ -141,12 +165,14 @@ body {
     font-weight: 600;
 }
 
+/* Grupo de entrada (label + input) */
 .input-group {
     display: flex;
     align-items: center;
     margin-bottom: 15px;
 }
 
+/* Etiqueta del campo de entrada */
 .input-group label {
     margin-right: 10px;
     color: var(--text-color);
@@ -154,6 +180,7 @@ body {
     font-weight: 500;
 }
 
+/* Campo de texto del formulario */
 .input-group input {
     flex: 1;
     padding: 10px 12px;
@@ -165,12 +192,14 @@ body {
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Estilo al enfocar un campo de texto */
 .input-group input:focus {
     border-color: var(--neon-blue);
     outline: none;
     box-shadow: 0 0 0 2px rgba(0, 180, 255, 0.2);
 }
 
+/* Botón principal del formulario de predicción */
 .prediction-btn {
     background-color: var(--bitcoin-color);
     color: white;
@@ -188,17 +217,20 @@ body {
     text-align: center;
 }
 
+/* Hover sobre el botón */
 .prediction-btn:hover {
     background-color: #e37b00;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(247, 147, 26, 0.3);
 }
 
+/* Estilo del botón al hacer clic */
 .prediction-btn:active {
     transform: translateY(0);
     box-shadow: none;
 }
 
+/* Contenedor del resultado de predicción */
 #prediction-result {
     margin-top: 15px;
     background-color: rgba(0, 180, 255, 0.05);
@@ -206,12 +238,14 @@ body {
     padding: 8px;
 }
 
+/* Información sobre el beneficio */
 .profit-info {
     margin-top: 15px;
     color: var(--text-color);
     font-size: 0.95rem;
 }
 
+/* Cantidad de beneficio destacada */
 .profit-amount {
     font-weight: bold;
     margin-top: 8px;
@@ -220,6 +254,7 @@ body {
     text-align: center;
 }
 
+/* Tarjeta informativa */
 .card {
     background-color: var(--card-bg);
     border-radius: 12px;
@@ -231,6 +266,7 @@ body {
     max-width: 1100px;
 }
 
+/* Cabecera de tarjeta */
 .card-header {
     padding: 1.5rem;
     border-bottom: 1px solid var(--border-color);
@@ -239,11 +275,13 @@ body {
     align-items: center;
 }
 
+/* Título dentro de una tarjeta */
 .card-title {
     font-size: 1.25rem;
     font-weight: 600;
 }
 
+/* Indicador de estado de actualización */
 .update-status {
     margin-top: 10px;
     padding: 5px;
@@ -251,6 +289,7 @@ body {
     font-weight: bold;
 }
 
+/* Selector de fechas */
 .date-selector {
     display: flex;
     align-items: center;
@@ -262,6 +301,7 @@ body {
     max-width: 900px;
 }
 
+/* Campo de entrada de fecha */
 .date-input {
     background-color: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -275,11 +315,13 @@ body {
     min-width: 200px;
 }
 
+/* Efecto de foco en campos de fecha */
 .date-input:focus {
     border-color: var(--neon-blue);
     box-shadow: 0 0 0 2px rgba(0, 180, 255, 0.2);
 }
 
+/* Botón para aplicar rango de fechas */
 .date-button {
     background: linear-gradient(45deg, var(--neon-purple), var(--neon-blue));
     border: none;
@@ -293,16 +335,19 @@ body {
     min-width: 180px;
 }
 
+/* Hover del botón de fecha */
 .date-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 0 15px rgba(123, 93, 250, 0.5);
 }
 
+/* Clic activo en el botón de fecha */
 .date-button:active {
     transform: translateY(0);
     box-shadow: 0 0 5px rgba(123, 93, 250, 0.3);
 }
 
+/* Contenedor para gráficas incrustadas */
 .graph-container {
     width: 100%;
     height: 600px;
@@ -314,12 +359,14 @@ body {
     margin: 0 auto;
 }
 
+/* iframe que contiene la gráfica */
 .graph-iframe {
     width: 100%;
     height: 100%;
     border: none;
 }
 
+/* Fila de tarjetas de datos */
 .data-row {
     display: flex;
     flex-wrap: wrap;
@@ -330,6 +377,7 @@ body {
     margin: 2rem auto;
 }
 
+/* Tarjetas individuales con información */
 .data-card {
     background-color: var(--card-bg);
     border-radius: 10px;
@@ -343,22 +391,26 @@ body {
     text-align: center;
 }
 
+/* Hover sobre tarjetas */
 .data-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
+/* Etiqueta dentro de la tarjeta */
 .data-label {
     font-size: 0.9rem;
     color: var(--secondary-text);
     margin-bottom: 0.5rem;
 }
 
+/* Valor numérico destacado */
 .data-value {
     font-size: 1.8rem;
     font-weight: 700;
 }
 
+/* Cambios porcentuales a 7 y 30 días */
 #change-7d, #change-30d {
     display: flex;
     align-items: center;
@@ -368,6 +420,7 @@ body {
     justify-content: center;
 }
 
+/* Flechas visuales de cambio (arriba/abajo) */
 #arrow-7d, #arrow-30d {
     display: inline-block;
 }

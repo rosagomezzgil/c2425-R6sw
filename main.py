@@ -1,6 +1,14 @@
 """
-Bitcoin Price Prediction and Technical Analysis API
+API de Predicción de Precio de Bitcoin y Análisis Técnico
+
+Esta aplicación basada en FastAPI proporciona una API para la predicción del precio
+de Bitcoin y el análisis técnico. Utiliza modelos de aprendizaje automático,
+específicamente SVR (Regresión por Vectores de Soporte) y XGBoost, para predecir
+los precios de Bitcoin para los próximos 7 y 30 días. La aplicación también genera
+gráficos en tiempo real con los datos del mercado de Bitcoin, incluyendo gráficos
+de velas, volumen y RSI (Índice de Fuerza Relativa).
 """
+
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
